@@ -1,0 +1,1909 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 TeachIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+var FIREBASE_CONFIG = (function() {
+    var p1 = "AIzaSyCdrJOLym";
+    var p2 = "Xxs7XtsZb-ijwROiJ2xgeFTzE";
+    var d1 = "https://hot-lexa";
+    var d2 = "-default-rtdb.firebaseio.com";
+    var p = "hot" + "-" + "lexa";
+    return {
+        apiKey: p1 + p2,
+        authDomain: p + ".firebaseapp.com",
+        databaseURL: d1 + d2,
+        projectId: p,
+        storageBucket: p + ".firebasestorage.app",
+        messagingSenderId: "909722788172",
+        appId: "1:909722788172:web:6c0b1eb6524c321f2b6fe9"
+    };
+})();
+
+firebase.initializeApp(FIREBASE_CONFIG);
+var db = firebase.database();
+window.fb = {
+    ref: function(p) { return db.ref(p); },
+    set: function(r, v) { return r.set(v); },
+    get: function(r) { return r.get(); },
+    push: function(r) { return r.push(); },
+    update: function(r, v) { return r.update(v); },
+    remove: function(r) { return r.remove(); },
+    onValue: function(r, cb) { return r.on('value', cb); }
+};
+</script>
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: radial-gradient(ellipse at top, #121a2e 0%, #0a0e1a 60%);
+        font-family: 'Inter', sans-serif; color: #e8ecf5; min-height: 100vh;
+        -webkit-font-smoothing: antialiased;
+    }
+    .container { max-width: 1240px; margin: 0 auto; padding: 20px; }
+
+    header {
+        background: linear-gradient(135deg, rgba(42,26,90,0.9), rgba(31,15,58,0.9));
+        border: 2px solid #a855f7; border-radius: 20px;
+        padding: 22px 30px; margin-bottom: 24px;
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 14px;
+        box-shadow: 0 8px 40px rgba(168,85,247,0.25), inset 0 1px 0 rgba(255,255,255,0.05);
+        backdrop-filter: blur(10px);
+    }
+    header h1 { font-size: 26px; letter-spacing: 5px; color: #fff; font-weight: 900; }
+    header h1 span { color: #a855f7; text-shadow: 0 0 20px #a855f7, 0 0 40px rgba(168,85,247,0.5); }
+    .user-info {
+        display: flex; align-items: center; gap: 12px;
+        background: rgba(0,0,0,0.5); padding: 8px 18px;
+        border-radius: 14px; border: 2px solid #a855f7;
+        box-shadow: 0 0 20px rgba(168,85,247,0.3);
+    }
+    .user-info .avatar {
+        width: 42px; height: 42px; border-radius: 50%;
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900; color: #fff; font-size: 18px;
+        box-shadow: 0 0 20px rgba(168,85,247,0.6);
+    }
+    .user-info .name { color: #fff; font-weight: 800; font-size: 14px; }
+    .logout-btn {
+        background: rgba(255,74,125,0.15); border: 2px solid #ff4a7d;
+        color: #ff4a7d; padding: 10px 16px; border-radius: 12px;
+        font-size: 12px; font-weight: 800; cursor: pointer;
+        font-family: inherit; letter-spacing: 1px; transition: 0.25s;
+    }
+    .logout-btn:hover { background: #ff4a7d; color: #fff; transform: translateY(-2px); }
+
+    .tabs {
+        display: flex; gap: 8px; margin-bottom: 24px;
+        background: rgba(0,0,0,0.45); border-radius: 16px;
+        padding: 6px; border: 2px solid #3a2a5a;
+        flex-wrap: wrap; box-shadow: inset 0 2px 12px rgba(0,0,0,0.5);
+    }
+    .tab {
+        flex: 1; padding: 14px 12px; background: none; border: none;
+        color: #8899bb; font-size: 12px; font-weight: 800;
+        letter-spacing: 1.5px; cursor: pointer; font-family: inherit;
+        border-radius: 12px; transition: 0.25s; text-transform: uppercase;
+        min-width: 120px; white-space: nowrap;
+    }
+    .tab:hover { color: #fff; background: rgba(168,85,247,0.1); }
+    .tab.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; box-shadow: 0 4px 20px rgba(168,85,247,0.5); }
+
+    .card {
+        background: linear-gradient(135deg, rgba(26,42,90,0.9), rgba(15,26,58,0.9));
+        border: 2px solid #3a4a7a; border-radius: 18px;
+        padding: 24px; margin-bottom: 16px;
+        transition: 0.3s cubic-bezier(0.34,1.56,0.64,1);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+    }
+    .card:hover { border-color: #a855f7; transform: translateY(-2px); box-shadow: 0 12px 40px rgba(168,85,247,0.25); }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+    .card-title { color: #fff; font-size: 18px; font-weight: 900; letter-spacing: 0.5px; }
+    .card-desc { color: #c8d4e8; font-size: 14px; line-height: 1.7; margin-bottom: 14px; white-space: pre-wrap; word-break: break-word; }
+    .card-meta { display: flex; gap: 14px; flex-wrap: wrap; font-size: 12px; color: #8899bb; letter-spacing: 0.5px; align-items: center; }
+
+    .btn {
+        width: 100%; padding: 16px; border: none; border-radius: 14px;
+        font-size: 14px; font-weight: 900; letter-spacing: 2px;
+        cursor: pointer; font-family: inherit; transition: 0.25s;
+        text-transform: uppercase; margin-bottom: 10px;
+    }
+    .btn-primary { background: linear-gradient(135deg, #44ff88, #22aa44); color: #0a0a14; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(68,255,136,0.5); }
+    .btn-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
+    .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(168,85,247,0.5); }
+    .btn-blue { background: linear-gradient(135deg, #4a9eff, #2a6acc); color: #fff; }
+    .btn-blue:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(74,158,255,0.5); }
+    .btn-danger { background: linear-gradient(135deg, #ff4a7d, #cc2a5a); color: #fff; }
+    .btn-danger:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,74,125,0.5); }
+    .btn-warn { background: linear-gradient(135deg, #ffdd44, #ffaa22); color: #0a0a14; }
+    .btn-warn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,221,68,0.5); }
+    .btn-ghost { background: rgba(255,255,255,0.05); border: 2px solid #2a3a5a; color: #8899bb; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: #a855f7; color: #fff; }
+    .btn-small { padding: 10px 18px; font-size: 12px; width: auto; display: inline-block; margin-right: 6px; }
+
+    .input-group { margin-bottom: 16px; }
+    .input-group label {
+        display: block; color: #8899bb; font-size: 11px;
+        letter-spacing: 2px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;
+    }
+    .input-group input, .input-group textarea, .input-group select {
+        width: 100%; padding: 14px 18px; background: rgba(0,0,0,0.5);
+        border: 2px solid #2a3a5a; border-radius: 12px; color: #fff;
+        font-size: 15px; font-family: inherit; font-weight: 600;
+        outline: none; transition: 0.25s;
+    }
+    .input-group textarea { min-height: 80px; resize: vertical; line-height: 1.6; }
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+        border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168,85,247,0.15);
+        background: rgba(0,0,0,0.7);
+    }
+
+    .badge { display: inline-block; padding: 5px 14px; border-radius: 20px; font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+    .badge-green { background: rgba(68,255,136,0.15); color: #44ff88; border: 1px solid #44ff88; }
+    .badge-yellow { background: rgba(255,221,68,0.15); color: #ffdd44; border: 1px solid #ffdd44; }
+    .badge-blue { background: rgba(74,158,255,0.15); color: #4a9eff; border: 1px solid #4a9eff; }
+    .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid #a855f7; }
+    .badge-red { background: rgba(255,74,125,0.15); color: #ff4a7d; border: 1px solid #ff4a7d; }
+    .badge-orange { background: rgba(255,150,68,0.15); color: #ff9644; border: 1px solid #ff9644; }
+
+    .grade { display: inline-flex; align-items: center; justify-content: center; width: 60px; height: 60px; border-radius: 16px; font-size: 26px; font-weight: 900; flex-shrink: 0; box-shadow: 0 4px 20px rgba(0,0,0,0.3); }
+    .grade-5 { background: linear-gradient(135deg, #44ff88, #22ff66); color: #0a0a14; }
+    .grade-4 { background: linear-gradient(135deg, #88dd44, #44aa22); color: #0a0a14; }
+    .grade-3 { background: linear-gradient(135deg, #ffdd44, #ffaa22); color: #0a0a14; }
+    .grade-2 { background: linear-gradient(135deg, #ff4a7d, #cc2a5a); color: #fff; }
+    .score-display { display: inline-flex; align-items: center; justify-content: center; padding: 12px 20px; border-radius: 16px; font-size: 22px; font-weight: 900; background: linear-gradient(135deg, #4a9eff, #2a6acc); color: #fff; box-shadow: 0 4px 20px rgba(74,158,255,0.4); }
+
+    /* Конструктор вопросов */
+    .question-block {
+        background: rgba(0,0,0,0.45); border: 2px solid #2a3a5a;
+        border-radius: 16px; padding: 20px; margin-bottom: 14px;
+        position: relative; margin-top: 18px;
+    }
+    .question-block .q-num {
+        position: absolute; top: -14px; left: 18px;
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        color: #fff; padding: 5px 14px; border-radius: 20px;
+        font-size: 12px; font-weight: 900; box-shadow: 0 4px 16px rgba(168,85,247,0.5);
+    }
+    .question-block .delete-q {
+        position: absolute; top: 12px; right: 12px;
+        width: 32px; height: 32px; border-radius: 8px;
+        background: rgba(255,74,125,0.15); border: 1px solid #ff4a7d;
+        color: #ff4a7d; cursor: pointer; font-size: 14px; transition: 0.2s;
+    }
+    .question-block .delete-q:hover { background: #ff4a7d; color: #fff; }
+
+    .answer-row {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 12px 14px; background: rgba(0,0,0,0.3);
+        border: 1px solid #2a3a5a; border-radius: 12px; margin-bottom: 8px;
+        transition: 0.2s;
+    }
+    .answer-row.correct { border-color: #44ff88; background: rgba(68,255,136,0.08); }
+    .answer-row input[type="radio"] { width: 20px; height: 20px; accent-color: #44ff88; margin-top: 8px; flex-shrink: 0; }
+    .answer-row textarea {
+        flex: 1; background: none; border: none; color: #fff;
+        font-size: 14px; font-family: inherit; font-weight: 600;
+        outline: none; resize: vertical; min-height: 36px; line-height: 1.5;
+        padding: 6px 0;
+    }
+    .answer-row .remove-a {
+        width: 30px; height: 30px; border-radius: 8px;
+        background: rgba(255,74,125,0.15); border: 1px solid #ff4a7d;
+        color: #ff4a7d; cursor: pointer; font-size: 12px; flex-shrink: 0;
+    }
+
+    .type-selector { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .type-btn {
+        padding: 10px 18px; background: rgba(0,0,0,0.4);
+        border: 2px solid #2a3a5a; border-radius: 10px;
+        color: #8899bb; font-size: 12px; font-weight: 800;
+        letter-spacing: 1px; cursor: pointer; font-family: inherit;
+        transition: 0.2s; text-transform: uppercase;
+    }
+    .type-btn:hover { border-color: #a855f7; color: #fff; }
+    .type-btn.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border-color: #a855f7; }
+
+    /* Файлы вопроса */
+    .q-files-zone {
+        margin-top: 14px; padding: 14px;
+        background: rgba(0,0,0,0.25);
+        border: 2px dashed #3a4a7a; border-radius: 12px;
+        transition: 0.2s;
+    }
+    .q-files-zone:hover { border-color: #a855f7; }
+    .q-files-zone .q-files-title {
+        font-size: 11px; font-weight: 800; letter-spacing: 2px;
+        color: #8899bb; text-transform: uppercase; margin-bottom: 10px;
+        display: flex; justify-content: space-between; align-items: center;
+        gap: 10px; flex-wrap: wrap;
+    }
+    .q-files-zone .q-files-add {
+        padding: 8px 14px; background: linear-gradient(135deg, #4a9eff, #2a6acc);
+        color: #fff; border: none; border-radius: 10px;
+        font-size: 11px; font-weight: 900; letter-spacing: 1px;
+        cursor: pointer; font-family: inherit; text-transform: uppercase;
+        transition: 0.2s;
+    }
+    .q-files-zone .q-files-add:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(74,158,255,0.4); }
+    .q-files-zone input[type="file"] { display: none; }
+
+    .files-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .file-item {
+        position: relative; border-radius: 12px; overflow: hidden;
+        border: 2px solid #2a3a5a; transition: 0.2s; cursor: pointer;
+        background: rgba(0,0,0,0.4);
+    }
+    .file-item:hover { border-color: #a855f7; }
+    .file-item img { display: block; max-width: 200px; max-height: 140px; object-fit: cover; }
+    .file-item video { display: block; max-width: 240px; max-height: 160px; }
+    .file-item audio { display: block; width: 240px; }
+    .file-item .file-name { padding: 6px 10px; background: rgba(0,0,0,0.6); font-size: 11px; color: #c8d4e8; text-align: center; }
+    .file-item .file-remove {
+        position: absolute; top: 4px; right: 4px;
+        width: 22px; height: 22px; border-radius: 50%;
+        background: rgba(255,74,125,0.9); color: #fff;
+        border: none; cursor: pointer; font-size: 12px; font-weight: 900;
+        line-height: 1; display: flex; align-items: center; justify-content: center;
+    }
+
+    /* Модалки */
+    .modal {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(10px); z-index: 500; display: none;
+        align-items: flex-start; justify-content: center;
+        padding: 20px; overflow-y: auto;
+    }
+    .modal.active { display: flex; animation: fadeIn 0.25s ease; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    .modal-box {
+        background: linear-gradient(135deg, #1a2a5a, #0f1a3a);
+        border: 2px solid #a855f7; border-radius: 24px;
+        padding: 30px; max-width: 900px; width: 100%;
+        margin: 40px auto;
+        box-shadow: 0 20px 80px rgba(168,85,247,0.4);
+        animation: slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes slideUp { from { transform: translateY(40px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    .modal-title {
+        color: #fff; font-size: 22px; font-weight: 900;
+        letter-spacing: 2px; margin-bottom: 20px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-close-btn {
+        width: 40px; height: 40px; border-radius: 12px;
+        background: rgba(255,74,125,0.15); border: 2px solid #ff4a7d;
+        color: #ff4a7d; font-size: 18px; cursor: pointer; font-family: inherit;
+        transition: 0.2s;
+    }
+    .modal-close-btn:hover { background: #ff4a7d; color: #fff; transform: rotate(90deg); }
+
+    #toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%) translateY(150px);
+        padding: 18px 30px; background: rgba(15,15,26,0.98);
+        border: 2px solid #a855f7; border-radius: 16px;
+        color: #a855f7; font-size: 14px; font-weight: 800;
+        z-index: 9999; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        pointer-events: none; max-width: 90vw; text-align: center;
+        box-shadow: 0 12px 60px rgba(168,85,247,0.5);
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.error { border-color: #ff4a7d; color: #ff4a7d; box-shadow: 0 12px 60px rgba(255,74,125,0.5); }
+
+    .empty { text-align: center; padding: 70px 20px; color: #556677; font-size: 15px; font-weight: 600; }
+    .empty::before { content: '📭'; display: block; font-size: 70px; margin-bottom: 18px; opacity: 0.5; }
+
+    .manual-check-row {
+        display: flex; align-items: center; gap: 12px;
+        margin-top: 14px; padding: 14px 18px;
+        background: rgba(0,0,0,0.3); border: 2px dashed #4a6aaa;
+        border-radius: 14px; flex-wrap: wrap;
+    }
+    .manual-check-row .check-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #8899bb; text-transform: uppercase; }
+    .check-btn {
+        width: 50px; height: 50px; border-radius: 14px;
+        border: 2px solid #2a3a5a; background: rgba(0,0,0,0.4);
+        font-size: 26px; cursor: pointer; font-family: inherit;
+        transition: 0.2s; display: flex; align-items: center; justify-content: center;
+    }
+    .check-btn:hover { transform: scale(1.08); }
+    .check-btn.check-yes { border-color: #44ff88; color: #44ff88; }
+    .check-btn.check-yes.active { background: #44ff88; color: #0a0a14; box-shadow: 0 0 24px rgba(68,255,136,0.6); }
+    .check-btn.check-no { border-color: #ff4a7d; color: #ff4a7d; }
+    .check-btn.check-no.active { background: #ff4a7d; color: #fff; box-shadow: 0 0 24px rgba(255,74,125,0.6); }
+    .check-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 7px 16px; border-radius: 20px; font-size: 12px; font-weight: 900; letter-spacing: 1px; }
+    .check-status-badge.ok { background: rgba(68,255,136,0.15); color: #44ff88; border: 1px solid #44ff88; }
+    .check-status-badge.fail { background: rgba(255,74,125,0.15); color: #ff4a7d; border: 1px solid #ff4a7d; }
+
+    #loginScreen {
+        position: fixed; inset: 0;
+        background: radial-gradient(ellipse at center, #1a2a5a 0%, #05080f 70%);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 2000; padding: 20px;
+    }
+    .login-card {
+        background: linear-gradient(135deg, rgba(26,42,90,0.95), rgba(15,26,58,0.95));
+        border: 2px solid #a855f7; border-radius: 24px;
+        padding: 40px 34px; max-width: 480px; width: 100%;
+        box-shadow: 0 20px 80px rgba(168,85,247,0.4);
+    }
+    .login-title { color: #fff; font-size: 30px; font-weight: 900; letter-spacing: 5px; margin-bottom: 10px; text-align: center; text-shadow: 0 0 30px rgba(168,85,247,0.6); }
+    .login-subtitle { text-align: center; color: #8899bb; font-size: 13px; margin-bottom: 28px; letter-spacing: 1px; }
+    .role-select { display: flex; gap: 12px; margin-bottom: 24px; }
+    .role-btn {
+        flex: 1; padding: 20px 10px; border: 2px solid #2a3a5a;
+        background: rgba(0,0,0,0.4); border-radius: 14px;
+        color: #8899bb; font-size: 13px; font-weight: 900;
+        letter-spacing: 1.5px; cursor: pointer; font-family: inherit;
+        transition: 0.25s; text-transform: uppercase;
+    }
+    .role-btn:hover { border-color: #a855f7; color: #fff; }
+    .role-btn.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border-color: #a855f7; box-shadow: 0 8px 30px rgba(168,85,247,0.5); }
+    .login-error { color: #ff4a7d; font-size: 13px; font-weight: 700; text-align: center; margin-top: 14px; min-height: 18px; }
+
+    .timer-display {
+        position: fixed; top: 20px; right: 20px;
+        padding: 16px 24px;
+        background: linear-gradient(135deg, #ff4a7d, #cc2a5a);
+        border-radius: 16px; color: #fff; font-size: 22px;
+        font-weight: 900; letter-spacing: 2px; z-index: 100;
+        box-shadow: 0 8px 40px rgba(255,74,125,0.6);
+        display: none;
+    }
+    .timer-display.active { display: block; animation: pulse 1s infinite; }
+    @keyframes pulse { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+
+    .form-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+    @media (max-width: 700px) { .form-grid-3 { grid-template-columns: 1fr; } }
+
+    /* ======== НАВИГАЦИЯ ПО ВОПРОСАМ (кружки) ======== */
+    .q-nav {
+        display: flex; flex-wrap: wrap; gap: 10px;
+        padding: 18px 20px; margin-bottom: 20px;
+        background: rgba(0,0,0,0.4); border: 2px solid #3a4a7a;
+        border-radius: 18px; align-items: center;
+        max-height: 200px; overflow-y: auto;
+        box-shadow: inset 0 2px 12px rgba(0,0,0,0.4);
+    }
+    .q-nav-circle {
+        width: 48px; height: 48px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 16px; font-weight: 900;
+        border: 2px solid #3a4a7a; background: rgba(0,0,0,0.5);
+        color: #8899bb; cursor: pointer; transition: 0.25s;
+        font-family: inherit; position: relative;
+        flex-shrink: 0;
+    }
+    .q-nav-circle:hover { transform: scale(1.1); border-color: #a855f7; color: #fff; }
+    .q-nav-circle.active {
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        color: #fff; border-color: #a855f7;
+        box-shadow: 0 0 24px rgba(168,85,247,0.7);
+        transform: scale(1.12);
+    }
+    .q-nav-circle.answered { border-color: #44ff88; color: #44ff88; }
+    .q-nav-circle.answered.active {
+        background: linear-gradient(135deg, #44ff88, #22aa44);
+        color: #0a0a14; border-color: #44ff88;
+        box-shadow: 0 0 24px rgba(68,255,136,0.7);
+    }
+    .q-nav-circle .check-mark {
+        position: absolute; bottom: -4px; right: -4px;
+        width: 18px; height: 18px; border-radius: 50%;
+        background: #44ff88; color: #0a0a14;
+        font-size: 11px; font-weight: 900;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 10px rgba(68,255,136,0.8);
+    }
+
+    /* ======== ПРОХОЖДЕНИЕ ПО ОДНОМУ ВОПРОСУ ======== */
+    .q-step {
+        display: none;
+        background: rgba(0,0,0,0.4); border: 2px solid #3a4a7a;
+        border-radius: 18px; padding: 28px;
+        animation: slideUp 0.35s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .q-step.active { display: block; }
+    .q-step-title {
+        color: #fff; font-size: 17px; font-weight: 900;
+        margin-bottom: 18px; letter-spacing: 1px;
+        display: flex; align-items: center; gap: 12px;
+        flex-wrap: wrap;
+    }
+    .q-step-title .num-badge {
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        padding: 6px 16px; border-radius: 20px;
+        font-size: 13px; box-shadow: 0 4px 16px rgba(168,85,247,0.5);
+    }
+    .q-step-text {
+        color: #e8ecf5; font-size: 16px; font-weight: 700;
+        line-height: 1.7; margin-bottom: 18px; white-space: pre-wrap;
+        word-break: break-word;
+    }
+    .q-step-files {
+        margin-bottom: 18px;
+    }
+    .q-step-answers {
+        display: flex; flex-direction: column; gap: 10px;
+        margin-top: 16px;
+    }
+    .q-step-answer {
+        display: flex; align-items: flex-start; gap: 12px;
+        padding: 16px 18px; background: rgba(0,0,0,0.35);
+        border: 2px solid #3a4a7a; border-radius: 14px;
+        cursor: pointer; transition: 0.2s;
+    }
+    .q-step-answer:hover { border-color: #a855f7; background: rgba(168,85,247,0.08); }
+    .q-step-answer.selected {
+        border-color: #44ff88; background: rgba(68,255,136,0.1);
+        box-shadow: 0 0 24px rgba(68,255,136,0.25);
+    }
+    .q-step-answer input[type="radio"] {
+        width: 22px; height: 22px; accent-color: #44ff88;
+        margin-top: 2px; flex-shrink: 0;
+    }
+    .q-step-answer .ans-text {
+        flex: 1; color: #fff; font-size: 15px; font-weight: 600;
+        white-space: pre-wrap; word-break: break-word;
+    }
+    .q-step-textarea {
+        width: 100%; padding: 18px;
+        background: rgba(0,0,0,0.5); border: 2px solid #3a4a7a;
+        border-radius: 14px; color: #fff; font-size: 15px;
+        font-family: inherit; font-weight: 600; outline: none;
+        min-height: 140px; resize: vertical; line-height: 1.6;
+        transition: 0.25s;
+    }
+    .q-step-textarea:focus { border-color: #44ff88; box-shadow: 0 0 0 4px rgba(68,255,136,0.15); }
+
+    .q-step-nav {
+        display: flex; gap: 12px; margin-top: 24px;
+        flex-wrap: wrap;
+    }
+    .q-step-nav button {
+        padding: 16px 28px; border: none; border-radius: 14px;
+        font-size: 14px; font-weight: 900; letter-spacing: 2px;
+        cursor: pointer; font-family: inherit; transition: 0.25s;
+        text-transform: uppercase; flex: 1; min-width: 140px;
+    }
+    .q-step-nav .prev-btn {
+        background: rgba(255,255,255,0.08); border: 2px solid #3a4a7a;
+        color: #8899bb;
+    }
+    .q-step-nav .prev-btn:hover { background: rgba(255,255,255,0.15); color: #fff; border-color: #a855f7; }
+    .q-step-nav .next-btn {
+        background: linear-gradient(135deg, #4a9eff, #2a6acc); color: #fff;
+    }
+    .q-step-nav .next-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(74,158,255,0.5); }
+    .q-step-nav .finish-btn {
+        background: linear-gradient(135deg, #44ff88, #22aa44); color: #0a0a14;
+    }
+    .q-step-nav .finish-btn:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(68,255,136,0.6); }
+
+    .q-progress {
+        display: flex; justify-content: space-between; align-items: center;
+        margin-bottom: 14px; font-size: 12px; color: #8899bb;
+        letter-spacing: 1px; font-weight: 800; text-transform: uppercase;
+        flex-wrap: wrap; gap: 10px;
+    }
+
+    /* ======== ЭКРАН ЗАВЕРШЕНИЯ ======== */
+    .finish-screen {
+        text-align: center; padding: 50px 30px;
+        background: linear-gradient(135deg, rgba(26,42,90,0.95), rgba(15,26,58,0.95));
+        border: 2px solid #44ff88; border-radius: 24px;
+        box-shadow: 0 20px 80px rgba(68,255,136,0.3);
+        animation: slideUp 0.4s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    .finish-screen .finish-icon {
+        font-size: 90px; margin-bottom: 20px;
+        animation: bounceIn 0.7s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes bounceIn {
+        0% { transform: scale(0); opacity: 0; }
+        50% { transform: scale(1.2); }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .finish-screen h2 {
+        color: #fff; font-size: 30px; font-weight: 900;
+        letter-spacing: 2px; margin-bottom: 14px;
+    }
+    .finish-screen p {
+        color: #c8d4e8; font-size: 16px; line-height: 1.7;
+        margin-bottom: 30px; max-width: 500px; margin-left: auto; margin-right: auto;
+    }
+    .finish-screen .finish-actions {
+        display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+    }
+    .finish-screen .finish-actions button {
+        padding: 16px 32px; border: none; border-radius: 14px;
+        font-size: 14px; font-weight: 900; letter-spacing: 2px;
+        cursor: pointer; font-family: inherit; transition: 0.25s;
+        text-transform: uppercase; min-width: 200px;
+    }
+
+    @media (max-width: 600px) {
+        header { padding: 16px 20px; }
+        header h1 { font-size: 18px; letter-spacing: 3px; }
+        .tabs { flex-direction: column; }
+        .tab { min-width: auto; }
+        .modal-box { padding: 22px 18px; }
+        .login-card { padding: 28px 22px; }
+        .login-title { font-size: 24px; }
+        .q-nav-circle { width: 42px; height: 42px; font-size: 14px; }
+        .q-step { padding: 20px 16px; }
+        .q-step-title { font-size: 15px; }
+        .q-step-text { font-size: 15px; }
+        .q-step-nav button { padding: 14px 20px; font-size: 13px; min-width: 100px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+<div class="timer-display" id="timerDisplay">⏱ 00:00</div>
+
+<!-- ЭКРАН ВХОДА -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-title">📚 TeachIT</div>
+        <div class="login-subtitle">Образовательная платформа</div>
+
+        <div class="role-select">
+            <button class="role-btn active" id="roleStudent">🎓 Ученик</button>
+            <button class="role-btn" id="roleTeacher">👨‍🏫 Учитель</button>
+        </div>
+
+        <div id="studentForm">
+            <div class="input-group">
+                <label>Имя и фамилия</label>
+                <input type="text" id="studentNameInput" placeholder="Иван Иванов">
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="text" id="studentPassword" placeholder="Пароль">
+            </div>
+            <button class="btn btn-primary" id="studentLoginBtn">🚀 ВОЙТИ</button>
+        </div>
+
+        <div id="teacherForm" style="display:none;">
+            <div class="input-group">
+                <label>Пароль учителя</label>
+                <input type="password" id="teacherPassword" placeholder="••••••••">
+            </div>
+            <button class="btn btn-purple" id="teacherLoginBtn">🔓 ВОЙТИ КАК УЧИТЕЛЬ</button>
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+    </div>
+</div>
+
+<!-- ОСНОВНОЕ ПРИЛОЖЕНИЕ -->
+<div class="container" id="mainApp" style="display:none;">
+    <header>
+        <h1>📚 <span>Teach</span>IT</h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">?</div>
+                <div class="name" id="userNameDisplay">—</div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
+        </div>
+    </header>
+
+    <div class="tabs" id="teacherTabs" style="display:none;">
+        <button class="tab active" data-tab="create">➕ Создать</button>
+        <button class="tab" data-tab="list">📋 Задания</button>
+        <button class="tab" data-tab="check">✅ Проверка</button>
+        <button class="tab" data-tab="students">👥 Ученики</button>
+    </div>
+
+    <div class="tabs" id="studentTabs" style="display:none;">
+        <button class="tab active" data-tab="s_vpr">📋 ВПР</button>
+        <button class="tab" data-tab="s_kr">📝 Контрольные</button>
+        <button class="tab" data-tab="s_dz">🏠 Домашние</button>
+        <button class="tab" data-tab="s_oge">🎯 ОГЭ</button>
+        <button class="tab" data-tab="s_ege">🎓 ЕГЭ</button>
+        <button class="tab" data-tab="s_results">🏆 Оценки</button>
+    </div>
+
+    <div id="tabCreate" style="display:none;">
+        <div class="card">
+            <h2 id="createHeader" style="color:#a855f7;font-size:18px;letter-spacing:2px;margin-bottom:20px;">➕ НОВОЕ ЗАДАНИЕ</h2>
+
+            <div class="input-group">
+                <label>Название задания</label>
+                <textarea id="taskTitle" placeholder="Например: Контрольная работа" style="min-height:56px;"></textarea>
+            </div>
+            <div class="input-group">
+                <label>Описание</label>
+                <textarea id="taskDesc" placeholder="Что нужно сделать... (Enter = новая строка)"></textarea>
+            </div>
+
+            <div class="form-grid-3">
+                <div class="input-group">
+                    <label>Категория</label>
+                    <select id="taskCategory">
+                        <option value="vpr">📋 ВПР</option>
+                        <option value="kr">📝 Контрольная работа</option>
+                        <option value="dz" selected>🏠 Домашнее задание</option>
+                        <option value="oge">🎯 ОГЭ</option>
+                        <option value="ege">🎓 ЕГЭ</option>
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Дедлайн</label>
+                    <input type="datetime-local" id="taskDeadline">
+                </div>
+                <div class="input-group">
+                    <label>Таймер (минут)</label>
+                    <input type="number" id="taskTimer" min="1" max="1440" value="30">
+                </div>
+            </div>
+
+            <div class="input-group">
+                <label>Режим проверки</label>
+                <select id="taskMode">
+                    <option value="manual">✍️ Ручная работа (учитель ставит оценку)</option>
+                    <option value="auto">🤖 Авторабота (оценка автоматом)</option>
+                </select>
+            </div>
+
+            <div class="input-group" id="maxScoreGroup" style="display:none;">
+                <label>Максимум баллов (для ОГЭ/ЕГЭ)</label>
+                <input type="number" id="taskMaxScore" min="1" value="30">
+            </div>
+
+            <hr style="border:none;border-top:1px solid #2a3a5a;margin:24px 0;">
+
+            <h3 style="color:#a855f7;font-size:16px;letter-spacing:2px;margin-bottom:14px;">ВОПРОСЫ</h3>
+            <div id="questionsList"></div>
+            <button class="btn btn-blue" id="addQuestionBtn" style="margin-top:14px;">➕ Добавить вопрос</button>
+        </div>
+        <button class="btn btn-purple" id="saveTaskBtn">💾 СОХРАНИТЬ ЗАДАНИЕ</button>
+        <button class="btn btn-ghost" id="cancelEditBtn" style="display:none;">❌ Отменить редактирование</button>
+    </div>
+
+    <div id="tabList" style="display:none;"><div id="teacherTasksList"></div></div>
+    <div id="tabCheck" style="display:none;"><div id="checkList"></div></div>
+    <div id="tabStudents" style="display:none;"><div id="studentsList"></div></div>
+
+    <div id="tabS_vpr" style="display:none;"><div id="listVpr"></div></div>
+    <div id="tabS_kr" style="display:none;"><div id="listKr"></div></div>
+    <div id="tabS_dz" style="display:none;"><div id="listDz"></div></div>
+    <div id="tabS_oge" style="display:none;"><div id="listOge"></div></div>
+    <div id="tabS_ege" style="display:none;"><div id="listEge"></div></div>
+    <div id="tabS_results" style="display:none;"><div id="resultsList"></div></div>
+</div>
+
+<!-- МОДАЛКА ПРОХОЖДЕНИЯ -->
+<div class="modal" id="workModal">
+    <div class="modal-box" style="max-width:900px;">
+        <div class="modal-title">
+            <span id="workModalTitle">Выполнение работы</span>
+            <button class="modal-close-btn" id="closeWorkModalBtn">✕</button>
+        </div>
+        <div id="workModalContent"></div>
+    </div>
+</div>
+
+<!-- МОДАЛКА ПРОВЕРКИ (учитель) -->
+<div class="modal" id="checkModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>Проверка работы</span>
+            <button class="modal-close-btn" onclick="closeModal('checkModal')">✕</button>
+        </div>
+        <div id="checkModalContent"></div>
+    </div>
+</div>
+
+<!-- МОДАЛКА ФАЙЛА -->
+<div class="modal" id="fileModal" onclick="closeModal('fileModal')">
+    <div class="modal-box" style="max-width:900px;text-align:center;">
+        <div id="fileModalContent"></div>
+    </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function toast(text, type) {
+    type = type || 'ok';
+    const el = $('toast');
+    el.textContent = text;
+    el.className = 'show' + (type === 'error' ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function openModal(id) { $(id).classList.add('active'); }
+function closeModal(id) { $(id).classList.remove('active'); }
+window.closeModal = closeModal;
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ====== ПАРОЛЬ УЧИТЕЛЯ ====== */
+var _tp = (function() {
+    var a = 52;
+    var b = 69;
+    var c = 1488;
+    return String(a) + String(b) + String(c);
+})();
+function checkTeacherPassword(v) {
+    return String(v).replace(/\D/g, '') === _tp;
+}
+
+/* ====== СОСТОЯНИЕ ====== */
+let currentRole = null;
+let currentUser = null;
+let currentUserKey = null;
+let activeTimer = null;
+let questions = [];
+let editingTaskId = null;
+
+/* Состояние прохождения */
+let currentTask = null;
+let currentAnswers = [];
+let currentQuestionIdx = 0;
+let workFinished = false;
+
+const CATEGORIES = {
+    vpr: { name: '📋 ВПР', listId: 'listVpr', isExam: false },
+    kr:  { name: '📝 Контрольная работа', listId: 'listKr', isExam: false },
+    dz:  { name: '🏠 Домашнее задание', listId: 'listDz', isExam: false },
+    oge: { name: '🎯 ОГЭ', listId: 'listOge', isExam: true },
+    ege: { name: '🎓 ЕГЭ', listId: 'listEge', isExam: true }
+};
+
+/* ====== ВХОД ====== */
+$('roleStudent').addEventListener('click', () => {
+    currentRole = 'student';
+    $('roleStudent').classList.add('active');
+    $('roleTeacher').classList.remove('active');
+    $('studentForm').style.display = 'block';
+    $('teacherForm').style.display = 'none';
+    $('loginError').textContent = '';
+});
+$('roleTeacher').addEventListener('click', () => {
+    currentRole = 'teacher';
+    $('roleTeacher').classList.add('active');
+    $('roleStudent').classList.remove('active');
+    $('studentForm').style.display = 'none';
+    $('teacherForm').style.display = 'block';
+    $('loginError').textContent = '';
+});
+
+$('studentLoginBtn').addEventListener('click', async () => {
+    const name = $('studentNameInput').value.trim();
+    const password = $('studentPassword').value.trim();
+    if (!name) return $('loginError').textContent = 'Введи имя';
+    if (!password) return $('loginError').textContent = 'Введи пароль';
+
+    try {
+        const usersSnap = await fb.get(fb.ref('teachlexa/users'));
+        const users = usersSnap.val() || {};
+        const found = Object.entries(users).find(([k, u]) =>
+            u.name === name && u.password === password && u.role === 'student'
+        );
+
+        if (found) {
+            currentUserKey = found[0];
+            currentUser = found[1];
+        } else {
+            const newUserRef = fb.push(fb.ref('teachlexa/users'));
+            const userData = { name, password, role: 'student', createdAt: Date.now() };
+            await fb.set(newUserRef, userData);
+            currentUserKey = newUserRef.key;
+            currentUser = userData;
+        }
+        enterApp('student');
+    } catch (e) {
+        console.error(e);
+        $('loginError').textContent = 'Ошибка: ' + (e.message || e);
+    }
+});
+
+$('teacherLoginBtn').addEventListener('click', () => {
+    const v = $('teacherPassword').value;
+    if (checkTeacherPassword(v)) {
+        currentUser = { name: 'Учитель', role: 'teacher' };
+        currentUserKey = 'teacher';
+        enterApp('teacher');
+    } else {
+        $('loginError').textContent = '❌ Неверный пароль';
+        $('teacherPassword').value = '';
+    }
+});
+
+function enterApp(role) {
+    currentRole = role;
+    $('loginScreen').style.display = 'none';
+    $('mainApp').style.display = 'block';
+    $('userNameDisplay').textContent = currentUser.name;
+    $('userAvatar').textContent = currentUser.name[0].toUpperCase();
+
+    if (role === 'teacher') {
+        $('teacherTabs').style.display = 'flex';
+        $('studentTabs').style.display = 'none';
+        switchTab('create');
+    } else {
+        $('teacherTabs').style.display = 'none';
+        $('studentTabs').style.display = 'flex';
+        switchTab('s_vpr');
+    }
+    loadAll();
+}
+
+$('logoutBtn').addEventListener('click', () => location.reload());
+
+/* ====== ВКЛАДКИ ====== */
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+function switchTab(name) {
+    const map = {
+        create: 'tabCreate', list: 'tabList', check: 'tabCheck', students: 'tabStudents',
+        s_vpr: 'tabS_vpr', s_kr: 'tabS_kr', s_dz: 'tabS_dz',
+        s_oge: 'tabS_oge', s_ege: 'tabS_ege', s_results: 'tabS_results'
+    };
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const btn = document.querySelector(`.tab[data-tab="${name}"]`);
+    if (btn) btn.classList.add('active');
+    Object.values(map).forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+    if (map[name]) $(map[name]).style.display = 'block';
+}
+
+/* ====== КОНСТРУКТОР ВОПРОСОВ ====== */
+$('addQuestionBtn').addEventListener('click', () => {
+    questions.push({
+        type: 'choice', text: '',
+        answers: [{ text: '', correct: false }, { text: '', correct: false }],
+        correctText: '',
+        checkMode: 'auto',
+        files: []
+    });
+    renderQuestions();
+});
+
+function renderQuestions() {
+    const list = $('questionsList');
+    list.innerHTML = '';
+
+    questions.forEach((q, qi) => {
+        if (!q.files) q.files = [];
+        const block = document.createElement('div');
+        block.className = 'question-block';
+
+        let answersHtml = '';
+        if (q.type === 'choice') {
+            answersHtml = q.answers.map((a, ai) => `
+                <div class="answer-row ${a.correct ? 'correct' : ''}">
+                    <input type="radio" name="q${qi}_correct" ${a.correct ? 'checked' : ''} data-q="${qi}" data-a="${ai}" class="correct-radio">
+                    <textarea placeholder="Вариант ${ai+1}" data-q="${qi}" data-a="${ai}" class="answer-text" rows="1">${escapeHtml(a.text)}</textarea>
+                    <button class="remove-a" data-q="${qi}" data-a="${ai}">✕</button>
+                </div>
+            `).join('');
+            answersHtml += `<button class="btn btn-ghost btn-small" style="margin-top:6px;" data-add-answer="${qi}">➕ Добавить вариант</button>`;
+        } else {
+            answersHtml = `
+                <div class="input-group" style="margin:0 0 14px 0;">
+                    <label>Правильный ответ (для авто-проверки)</label>
+                    <textarea data-q="${qi}" class="correct-text-input" placeholder="Если проверка автоматическая" rows="1">${escapeHtml(q.correctText)}</textarea>
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label>Режим проверки этого вопроса</label>
+                    <div class="type-selector" style="margin-bottom:0;">
+                        <button class="type-btn ${q.checkMode === 'auto' ? 'active' : ''}" data-checkmode="auto" data-q="${qi}">🤖 Авто</button>
+                        <button class="type-btn ${q.checkMode === 'manual' ? 'active' : ''}" data-checkmode="manual" data-q="${qi}">👁 Ручная</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Блок файлов вопроса
+        const filesZoneHtml = `
+            <div class="q-files-zone">
+                <div class="q-files-title">
+                    <span>📎 Файлы к вопросу (картинка / видео / звук)</span>
+                    <button type="button" class="q-files-add" data-add-q-file="${qi}">+ Добавить файл</button>
+                    <input type="file" id="qFileInput${qi}" multiple accept="image/*,video/*,audio/*">
+                </div>
+                <div class="files-preview" id="qFilesPreview${qi}"></div>
+            </div>
+        `;
+
+        block.innerHTML = `
+            <div class="q-num">Вопрос ${qi + 1}</div>
+            <button class="delete-q" data-delete-q="${qi}">✕</button>
+            <div class="type-selector">
+                <button class="type-btn ${q.type === 'choice' ? 'active' : ''}" data-type="choice" data-q="${qi}">📋 Выбор ответа</button>
+                <button class="type-btn ${q.type === 'text' ? 'active' : ''}" data-type="text" data-q="${qi}">✏️ Написать ответ</button>
+            </div>
+            <div class="input-group" style="margin-top:10px;">
+                <label>Текст вопроса (Enter = новая строка)</label>
+                <textarea data-q="${qi}" class="question-text" placeholder="Что нужно ответить?" rows="2">${escapeHtml(q.text)}</textarea>
+            </div>
+            ${answersHtml}
+            ${filesZoneHtml}
+        `;
+        list.appendChild(block);
+    });
+
+    // Автоподгонка
+    list.querySelectorAll('textarea').forEach(autoResize);
+    // Отрисовка файлов вопросов
+    questions.forEach((q, qi) => renderQFilesPreview(qi));
+
+    // Обработчики
+    list.querySelectorAll('.delete-q').forEach(b => b.addEventListener('click', () => {
+        questions.splice(parseInt(b.dataset.deleteQ), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('.question-text').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].text = inp.value;
+        autoResize(inp);
+    }));
+    list.querySelectorAll('.answer-text').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].answers[parseInt(inp.dataset.a)].text = inp.value;
+        autoResize(inp);
+    }));
+    list.querySelectorAll('.correct-radio').forEach(r => r.addEventListener('change', () => {
+        const qi = parseInt(r.dataset.q);
+        questions[qi].answers.forEach(a => a.correct = false);
+        questions[qi].answers[parseInt(r.dataset.a)].correct = true;
+        renderQuestions();
+    }));
+    list.querySelectorAll('.remove-a').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].answers.splice(parseInt(b.dataset.a), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-add-answer]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.addAnswer)].answers.push({ text: '', correct: false });
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-type]').forEach(b => b.addEventListener('click', () => {
+        const qi = parseInt(b.dataset.q);
+        questions[qi].type = b.dataset.type;
+        if (b.dataset.type === 'text' && !questions[qi].checkMode) {
+            questions[qi].checkMode = 'auto';
+        }
+        renderQuestions();
+    }));
+    list.querySelectorAll('.correct-text-input').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].correctText = inp.value;
+        autoResize(inp);
+    }));
+    list.querySelectorAll('[data-checkmode]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].checkMode = b.dataset.checkmode;
+        renderQuestions();
+    }));
+    // Обработчики файлов вопросов
+    list.querySelectorAll('[data-add-q-file]').forEach(b => b.addEventListener('click', () => {
+        const qi = parseInt(b.dataset.addQFile);
+        $('qFileInput' + qi).click();
+    }));
+    list.querySelectorAll('input[id^="qFileInput"]').forEach(inp => {
+        inp.addEventListener('change', (e) => {
+            const qi = parseInt(inp.id.replace('qFileInput', ''));
+            Array.from(e.target.files).forEach(file => {
+                if (file.size > 1024 * 1024) { toast('Файл ' + file.name + ' > 1 МБ', 'error'); return; }
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    if (!questions[qi].files) questions[qi].files = [];
+                    questions[qi].files.push({
+                        name: file.name, type: file.type, data: ev.target.result, size: file.size
+                    });
+                    renderQFilesPreview(qi);
+                };
+                reader.readAsDataURL(file);
+            });
+            e.target.value = '';
+        });
+    });
+}
+
+function renderQFilesPreview(qi) {
+    const preview = $('qFilesPreview' + qi);
+    if (!preview) return;
+    const files = questions[qi].files || [];
+    preview.innerHTML = '';
+    files.forEach((f, fi) => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        if (f.type.startsWith('image/')) {
+            item.innerHTML = `<img src="${f.data}" alt="">`;
+        } else if (f.type.startsWith('video/')) {
+            item.innerHTML = `<video src="${f.data}" controls preload="metadata"></video>`;
+        } else if (f.type.startsWith('audio/')) {
+            item.innerHTML = `<audio src="${f.data}" controls></audio>`;
+            const n = document.createElement('div');
+            n.className = 'file-name';
+            n.textContent = f.name;
+            item.appendChild(n);
+        } else {
+            item.innerHTML = `<div style="padding:10px 16px;font-size:12px;">📎 ${escapeHtml(f.name)}</div>`;
+        }
+        const rm = document.createElement('button');
+        rm.className = 'file-remove';
+        rm.textContent = '✕';
+        rm.onclick = (e) => {
+            e.stopPropagation();
+            questions[qi].files.splice(fi, 1);
+            renderQFilesPreview(qi);
+        };
+        item.appendChild(rm);
+        preview.appendChild(item);
+    });
+}
+
+function autoResize(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = Math.max(ta.scrollHeight, 36) + 'px';
+}
+
+/* ====== СОХРАНЕНИЕ ЗАДАНИЯ ====== */
+$('taskCategory').addEventListener('change', () => {
+    const cat = $('taskCategory').value;
+    $('maxScoreGroup').style.display = CATEGORIES[cat].isExam ? 'block' : 'none';
+});
+
+$('saveTaskBtn').addEventListener('click', async () => {
+    const title = $('taskTitle').value.trim();
+    const desc = $('taskDesc').value.trim();
+    const category = $('taskCategory').value;
+    const deadline = $('taskDeadline').value;
+    const timerMin = parseInt($('taskTimer').value) || 30;
+    const mode = $('taskMode').value;
+    const maxScore = CATEGORIES[category].isExam ? (parseInt($('taskMaxScore').value) || 30) : null;
+
+    if (!title) return toast('Введи название', 'error');
+    if (questions.length === 0) return toast('Добавь хотя бы 1 вопрос', 'error');
+
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (!q.text.trim()) return toast('Заполни текст вопроса ' + (i+1), 'error');
+        if (q.type === 'choice') {
+            if (q.answers.length < 2) return toast('Вопрос ' + (i+1) + ' — минимум 2 варианта', 'error');
+            if (!q.answers.some(a => a.correct)) return toast('Вопрос ' + (i+1) + ' — выбери правильный', 'error');
+            if (q.answers.some(a => !a.text.trim())) return toast('Вопрос ' + (i+1) + ' — заполни варианты', 'error');
+        } else {
+            if (q.checkMode !== 'manual' && !q.correctText.trim()) {
+                return toast('Вопрос ' + (i+1) + ' — введи правильный ответ или выбери ручную проверку', 'error');
+            }
+        }
+    }
+
+    const data = {
+        title, desc, category,
+        deadline: deadline || null,
+        timerMin, mode, maxScore,
+        questions,
+        authorName: 'Учитель'
+    };
+
+    try {
+        if (editingTaskId) {
+            await fb.update(fb.ref('teachlexa/tasks/' + editingTaskId), data);
+            toast('✅ Задание обновлено!');
+        } else {
+            data.createdAt = Date.now();
+            const taskRef = fb.push(fb.ref('teachlexa/tasks'));
+            await fb.set(taskRef, data);
+            toast('✅ Задание создано!');
+        }
+        resetForm();
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка: ' + (e.message || e), 'error');
+    }
+});
+
+function resetForm() {
+    $('taskTitle').value = '';
+    $('taskDesc').value = '';
+    $('taskDeadline').value = '';
+    $('taskTimer').value = 30;
+    $('taskMaxScore').value = 30;
+    questions = [];
+    renderQuestions();
+    editingTaskId = null;
+    $('createHeader').textContent = '➕ НОВОЕ ЗАДАНИЕ';
+    $('saveTaskBtn').textContent = '💾 СОХРАНИТЬ ЗАДАНИЕ';
+    $('cancelEditBtn').style.display = 'none';
+    $('taskCategory').value = 'dz';
+    $('maxScoreGroup').style.display = 'none';
+}
+
+$('cancelEditBtn').addEventListener('click', () => { resetForm(); switchTab('list'); });
+
+function editTask(task) {
+    editingTaskId = task.id;
+    $('taskTitle').value = task.title || '';
+    $('taskDesc').value = task.desc || '';
+    $('taskCategory').value = task.category || 'dz';
+    $('taskDeadline').value = task.deadline || '';
+    $('taskTimer').value = task.timerMin || 30;
+    $('taskMode').value = task.mode || 'manual';
+    $('taskMaxScore').value = task.maxScore || 30;
+    questions = JSON.parse(JSON.stringify(task.questions || []));
+    renderQuestions();
+    $('createHeader').textContent = '✏️ РЕДАКТИРОВАНИЕ ЗАДАНИЯ';
+    $('saveTaskBtn').textContent = '💾 ОБНОВИТЬ ЗАДАНИЕ';
+    $('cancelEditBtn').style.display = 'block';
+    if (CATEGORIES[$('taskCategory').value].isExam) $('maxScoreGroup').style.display = 'block';
+    switchTab('create');
+}
+
+/* ====== ФАЙЛЫ (просмотр) ====== */
+function openFileModal(f) {
+    const content = $('fileModalContent');
+    if (f.type.startsWith('image/')) {
+        content.innerHTML = `<img src="${f.data}" style="max-width:100%;border-radius:14px;">`;
+    } else if (f.type.startsWith('video/')) {
+        content.innerHTML = `<video src="${f.data}" controls autoplay style="max-width:100%;border-radius:14px;"></video>`;
+    } else if (f.type.startsWith('audio/')) {
+        content.innerHTML = `<div style="padding:40px;"><div style="color:#fff;margin-bottom:20px;font-size:18px;font-weight:800;">${escapeHtml(f.name)}</div><audio src="${f.data}" controls autoplay style="width:100%;"></audio></div>`;
+    } else {
+        content.innerHTML = `<div style="padding:40px;color:#fff;">📎 ${escapeHtml(f.name)}</div>`;
+    }
+    openModal('fileModal');
+}
+
+function renderFilesForView(files, idPrefix) {
+    if (!files || files.length === 0) return '';
+    let html = `<div class="files-preview">`;
+    files.forEach((f, i) => {
+        html += `<div class="file-item" data-file-id="${idPrefix}-${i}">`;
+        if (f.type.startsWith('image/')) {
+            html += `<img src="${f.data}" alt="">`;
+        } else if (f.type.startsWith('video/')) {
+            html += `<video src="${f.data}" controls preload="metadata"></video>`;
+        } else if (f.type.startsWith('audio/')) {
+            html += `<audio src="${f.data}" controls></audio>`;
+            html += `<div class="file-name">${escapeHtml(f.name)}</div>`;
+        } else {
+            html += `<div style="padding:10px 16px;font-size:12px;">📎 ${escapeHtml(f.name)}</div>`;
+        }
+        html += `</div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+function attachFileClickHandlers(rootEl, files) {
+    rootEl.querySelectorAll('.file-item').forEach(fi => {
+        fi.addEventListener('click', () => {
+            const parts = fi.dataset.fileId.split('-');
+            const idx = parseInt(parts[parts.length - 1]);
+            if (!isNaN(idx) && files[idx]) openFileModal(files[idx]);
+        });
+    });
+}
+
+/* ====== ЗАГРУЗКА ДАННЫХ ====== */
+function loadAll() {
+    fb.onValue(fb.ref('teachlexa/tasks'), (snap) => {
+        const tasks = snap.val() || {};
+        if (currentRole === 'teacher') renderTeacherTasks(tasks);
+        else if (currentRole === 'student') renderStudentTasks(tasks);
+    });
+    fb.onValue(fb.ref('teachlexa/submissions'), (snap) => {
+        const subs = snap.val() || {};
+        if (currentRole === 'teacher') renderCheckList(subs);
+        else if (currentRole === 'student') renderResults(subs);
+    });
+    fb.onValue(fb.ref('teachlexa/users'), (snap) => {
+        if (currentRole === 'teacher') renderStudents(snap.val() || {});
+    });
+}
+
+/* ====== УЧИТЕЛЬ: СПИСОК ЗАДАНИЙ ====== */
+function renderTeacherTasks(tasks) {
+    const list = $('teacherTasksList');
+    if (!list) return;
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+    if (all.length === 0) { list.innerHTML = '<div class="empty">Заданий пока нет</div>'; return; }
+
+    list.innerHTML = '';
+    all.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const deadlineText = task.deadline
+            ? new Date(task.deadline).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit' })
+            : 'без дедлайна';
+        const modeText = task.mode === 'auto' ? '🤖 Авторабота' : '✍️ Ручная работа';
+        const cat = CATEGORIES[task.category || 'dz'];
+
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(task.title)}</div>
+                    <div class="card-meta" style="margin-top:10px;">
+                        <span class="badge badge-purple">${cat.name}</span>
+                        <span>📅 ${deadlineText}</span>
+                        <span>⏱ ${task.timerMin} мин</span>
+                        <span>📝 ${task.questions.length} вопросов</span>
+                        ${task.maxScore ? `<span class="badge badge-blue">Макс: ${task.maxScore} б.</span>` : ''}
+                        <span class="badge ${task.mode === 'auto' ? 'badge-blue' : 'badge-orange'}">${modeText}</span>
+                    </div>
+                </div>
+            </div>
+            ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ''}
+            <div style="margin-top:14px;">
+                <button class="btn btn-warn btn-small" data-edit="${task.id}">✏️ Редактировать</button>
+                <button class="btn btn-danger btn-small" data-del="${task.id}">🗑 Удалить</button>
+            </div>
+        `;
+        card.querySelector('[data-edit]').addEventListener('click', () => editTask(task));
+        card.querySelector('[data-del]').addEventListener('click', async () => {
+            if (!confirm('Удалить задание?')) return;
+            await fb.remove(fb.ref('teachlexa/tasks/' + task.id));
+            toast('Удалено');
+        });
+        list.appendChild(card);
+    });
+}
+
+/* ====== УЧИТЕЛЬ: ПРОВЕРКА ====== */
+function renderCheckList(submissions) {
+    const list = $('checkList');
+    if (!list) return;
+    const pending = Object.entries(submissions)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.status === 'submitted')
+        .sort((a,b) => (b.submittedAt||0) - (a.submittedAt||0));
+
+    if (pending.length === 0) { list.innerHTML = '<div class="empty">Нет работ на проверку</div>'; return; }
+
+    list.innerHTML = '';
+    pending.forEach(sub => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(sub.taskTitle)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>👤 ${escapeHtml(sub.studentName)}</span>
+                        <span>📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</span>
+                        <span class="badge badge-purple">${CATEGORIES[sub.category || 'dz'].name}</span>
+                    </div>
+                </div>
+                <span class="badge badge-yellow">На проверке</span>
+            </div>
+            <button class="btn btn-primary btn-small" style="margin-top:12px;" data-check="${sub.id}">✅ Проверить</button>
+        `;
+        card.querySelector('[data-check]').addEventListener('click', async () => {
+            const taskSnap = await fb.get(fb.ref('teachlexa/tasks/' + sub.taskId));
+            const task = taskSnap.val();
+            if (!task) return toast('Задание удалено', 'error');
+            openCheckModal(sub, task);
+        });
+        list.appendChild(card);
+    });
+}
+
+function openCheckModal(sub, task) {
+    const content = $('checkModalContent');
+    const manualResults = sub.manualChecks || {};
+    const isExam = CATEGORIES[task.category || 'dz'].isExam;
+
+    let html = `<div style="margin-bottom:16px;">
+        <div style="color:#fff;font-size:16px;font-weight:800;">${escapeHtml(task.title)}</div>
+        <div style="color:#8899bb;font-size:13px;margin-top:4px;">Ученик: <b style="color:#44ff88;">${escapeHtml(sub.studentName)}</b></div>
+        ${task.maxScore ? `<div style="color:#4a9eff;font-size:13px;margin-top:4px;">Максимум: <b>${task.maxScore} баллов</b></div>` : ''}
+    </div>`;
+
+    task.questions.forEach((q, i) => {
+        const ans = sub.answers[i];
+        const qCheckMode = q.type === 'text' ? (q.checkMode || 'auto') : 'auto';
+
+        html += `<div class="question-block">
+            <div style="color:#88ddff;font-size:13px;font-weight:800;margin-bottom:8px;white-space:pre-wrap;">Вопрос ${i+1}: ${escapeHtml(q.text)}</div>`;
+
+        // Файлы вопроса — просмотр (без редактирования)
+        if (q.files && q.files.length) {
+            html += `<div style="margin-bottom:10px;" data-check-files="${i}">${renderFilesForView(q.files, 'chk-q' + i)}</div>`;
+        }
+
+        if (q.type === 'choice') {
+            const correctText = (q.answers.find(a => a.correct) || {}).text || '';
+            html += `<div style="font-size:13px;color:#8899bb;">Ответ ученика: <b style="color:#fff;white-space:pre-wrap;">${escapeHtml(ans && ans.text || '(нет)')}</b></div>
+                <div style="font-size:13px;color:#8899bb;margin-top:4px;">Правильный: <b style="color:#44ff88;white-space:pre-wrap;">${escapeHtml(correctText)}</b></div>`;
+        } else {
+            html += `<div style="font-size:13px;color:#8899bb;">Ответ ученика:</div>
+                <div style="background:rgba(0,0,0,0.4);padding:14px;border-radius:12px;margin-top:8px;color:#fff;font-size:14px;white-space:pre-wrap;word-break:break-word;">${escapeHtml(ans && ans.text || '(нет ответа)')}</div>`;
+
+            if (qCheckMode === 'manual') {
+                const cur = manualResults[i];
+                html += `<div class="manual-check-row" data-qindex="${i}">
+                    <span class="check-label">Ручная проверка:</span>
+                    <button class="check-btn check-yes ${cur === true ? 'active' : ''}" data-check-q="${i}" data-check-val="true">✓</button>
+                    <button class="check-btn check-no ${cur === false ? 'active' : ''}" data-check-q="${i}" data-check-val="false">✕</button>
+                    <span class="check-status-badge ${cur === true ? 'ok' : cur === false ? 'fail' : ''}" data-status-badge="${i}">
+                        ${cur === true ? '✅ Верно' : cur === false ? '❌ Неверно' : '⏳ Ожидает'}
+                    </span>
+                </div>`;
+            } else {
+                html += `<div style="font-size:13px;color:#8899bb;margin-top:8px;">Правильный: <b style="color:#44ff88;white-space:pre-wrap;">${escapeHtml(q.correctText)}</b></div>`;
+            }
+        }
+        html += `</div>`;
+    });
+
+    if (isExam) {
+        html += `<div style="margin-top:24px;">
+            <label style="color:#8899bb;font-size:11px;letter-spacing:2px;font-weight:800;">БАЛЛЫ (макс. ${task.maxScore})</label>
+            <div style="display:flex;gap:10px;margin-top:10px;align-items:center;flex-wrap:wrap;">
+                <input type="number" id="examScoreInput" min="0" max="${task.maxScore}" value="${sub.score || 0}" style="width:120px;padding:16px;background:rgba(0,0,0,0.5);border:2px solid #4a9eff;border-radius:14px;color:#fff;font-size:20px;font-weight:900;text-align:center;font-family:inherit;">
+                <span style="color:#8899bb;font-size:14px;">из ${task.maxScore}</span>
+                <button class="btn btn-blue" style="width:auto;margin:0;padding:16px 26px;" id="saveScoreBtn">💾 Сохранить баллы</button>
+            </div>
+        </div>`;
+    } else {
+        html += `<div style="margin-top:24px;">
+            <label style="color:#8899bb;font-size:11px;letter-spacing:2px;font-weight:800;">ИТОГОВАЯ ОЦЕНКА</label>
+            <div style="display:flex;gap:10px;margin-top:10px;">
+                <button class="btn grade-5" style="width:64px;height:64px;font-size:26px;border-radius:16px;padding:0;" data-grade="5">5</button>
+                <button class="btn grade-4" style="width:64px;height:64px;font-size:26px;border-radius:16px;padding:0;" data-grade="4">4</button>
+                <button class="btn grade-3" style="width:64px;height:64px;font-size:26px;border-radius:16px;padding:0;" data-grade="3">3</button>
+                <button class="btn grade-2" style="width:64px;height:64px;font-size:26px;border-radius:16px;padding:0;" data-grade="2">2</button>
+            </div>
+        </div>`;
+    }
+
+    content.innerHTML = html;
+
+    // Обработчики файлов в проверке
+    task.questions.forEach((q, i) => {
+        if (q.files && q.files.length) {
+            const wrap = content.querySelector(`[data-check-files="${i}"]`);
+            if (wrap) attachFileClickHandlers(wrap, q.files);
+        }
+    });
+
+    content.querySelectorAll('[data-check-q]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const qi = parseInt(btn.dataset.checkQ);
+            const val = btn.dataset.checkVal === 'true';
+            manualResults[qi] = val;
+            const row = content.querySelector(`.manual-check-row[data-qindex="${qi}"]`);
+            row.querySelectorAll('.check-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const badge = row.querySelector(`[data-status-badge="${qi}"]`);
+            badge.className = 'check-status-badge ' + (val ? 'ok' : 'fail');
+            badge.textContent = val ? '✅ Верно' : '❌ Неверно';
+        });
+    });
+
+    if (isExam) {
+        $('saveScoreBtn').addEventListener('click', () => {
+            const score = parseInt($('examScoreInput').value) || 0;
+            setScore(sub.id, score, task.maxScore, manualResults);
+        });
+    } else {
+        content.querySelectorAll('[data-grade]').forEach(btn => {
+            btn.addEventListener('click', () => setGrade(sub.id, parseInt(btn.dataset.grade), manualResults));
+        });
+    }
+
+    openModal('checkModal');
+}
+
+async function setGrade(subId, grade, manualResults) {
+    try {
+        const updateData = { grade, status: 'graded', gradedAt: Date.now() };
+        if (manualResults && Object.keys(manualResults).length > 0) updateData.manualChecks = manualResults;
+        await fb.update(fb.ref('teachlexa/submissions/' + subId), updateData);
+        toast('✅ Оценка ' + grade + ' выставлена!');
+        closeModal('checkModal');
+    } catch (e) { console.error(e); toast('Ошибка', 'error'); }
+}
+
+async function setScore(subId, score, maxScore, manualResults) {
+    try {
+        const updateData = { score, maxScore, status: 'graded', gradedAt: Date.now() };
+        if (manualResults && Object.keys(manualResults).length > 0) updateData.manualChecks = manualResults;
+        await fb.update(fb.ref('teachlexa/submissions/' + subId), updateData);
+        toast('✅ Баллы ' + score + '/' + maxScore + ' сохранены!');
+        closeModal('checkModal');
+    } catch (e) { console.error(e); toast('Ошибка', 'error'); }
+}
+
+/* ====== УЧИТЕЛЬ: УЧЕНИКИ ====== */
+function renderStudents(users) {
+    const list = $('studentsList');
+    if (!list) return;
+    const students = Object.entries(users)
+        .map(([key, u]) => ({ ...u, key }))
+        .filter(u => u.role === 'student')
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+    if (students.length === 0) { list.innerHTML = '<div class="empty">Учеников пока нет</div>'; return; }
+
+    list.innerHTML = '';
+    students.forEach(st => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(st.name)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>🔑 Пароль: <b style="color:#ffdd44;">${escapeHtml(st.password)}</b></span>
+                        <span>📅 ${new Date(st.createdAt).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+/* ====== УЧЕНИК: КАТЕГОРИИ ====== */
+function renderStudentTasks(tasks) {
+    const byCat = { vpr: {}, kr: {}, dz: {}, oge: {}, ege: {} };
+    Object.entries(tasks).forEach(([id, t]) => {
+        const cat = t.category || 'dz';
+        if (byCat[cat]) byCat[cat][id] = t;
+    });
+
+    fb.get(fb.ref('teachlexa/submissions')).then(subSnap => {
+        const subs = subSnap.val() || {};
+        const mySubs = {};
+        Object.entries(subs).forEach(([id, s]) => {
+            if (s.studentKey === currentUserKey) mySubs[s.taskId] = { ...s, id };
+        });
+
+        Object.keys(byCat).forEach(cat => {
+            const listId = CATEGORIES[cat].listId;
+            renderCategoryList($(listId), byCat[cat], mySubs);
+        });
+    });
+}
+
+function renderCategoryList(listEl, tasks, mySubs) {
+    if (!listEl) return;
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+    if (all.length === 0) {
+        listEl.innerHTML = '<div class="empty">В этой категории заданий пока нет</div>';
+        return;
+    }
+
+    listEl.innerHTML = '';
+    all.forEach(task => {
+        const sub = mySubs[task.id];
+        const card = document.createElement('div');
+        card.className = 'card';
+        const isExam = CATEGORIES[task.category || 'dz'].isExam;
+
+        let statusBadge = '';
+        let actionBtn = '';
+
+        if (!sub) {
+            statusBadge = '<span class="badge badge-blue">Новое</span>';
+            actionBtn = `<button class="btn btn-primary btn-small" style="margin-top:14px;" data-start="${task.id}">🚀 Начать выполнение</button>`;
+        } else if (sub.status === 'submitted') {
+            statusBadge = '<span class="badge badge-yellow">На проверке</span>';
+            actionBtn = `<div style="color:#88bb99;font-size:13px;margin-top:14px;">Работа отправлена на проверку</div>`;
+        } else if (sub.status === 'graded') {
+            statusBadge = '<span class="badge badge-green">Проверено</span>';
+            if (isExam && sub.score != null) {
+                actionBtn = `<div style="display:flex;align-items:center;gap:14px;margin-top:14px;">
+                    <div class="score-display">${sub.score} / ${sub.maxScore}</div>
+                    <div style="color:#88bb99;font-size:13px;">баллов</div>
+                </div>`;
+            } else {
+                actionBtn = `<div style="display:flex;align-items:center;gap:14px;margin-top:14px;">
+                    <div class="grade grade-${sub.grade}">${sub.grade}</div>
+                    <div style="color:#88bb99;font-size:13px;">Оценка получена</div>
+                </div>`;
+            }
+        }
+
+        const deadlineText = task.deadline
+            ? new Date(task.deadline).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit' })
+            : 'без дедлайна';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(task.title)}</div>
+                    <div class="card-meta" style="margin-top:10px;">
+                        <span>📅 ${deadlineText}</span>
+                        <span>⏱ ${task.timerMin} мин</span>
+                        <span>📝 ${task.questions.length} вопросов</span>
+                        ${task.maxScore ? `<span class="badge badge-blue">Макс: ${task.maxScore} б.</span>` : ''}
+                    </div>
+                </div>
+                ${statusBadge}
+            </div>
+            ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ''}
+            ${actionBtn}
+        `;
+
+        const startBtn = card.querySelector('[data-start]');
+        if (startBtn) startBtn.addEventListener('click', () => startTask(task));
+
+        listEl.appendChild(card);
+    });
+}
+
+/* ====== ПРОХОЖДЕНИЕ РАБОТЫ (кружки) ====== */
+function startTask(task) {
+    currentTask = task;
+    currentAnswers = task.questions.map(q => ({ text: '', answered: false }));
+    currentQuestionIdx = 0;
+    workFinished = false;
+
+    $('workModalTitle').textContent = task.title;
+    $('closeWorkModalBtn').style.display = 'block';
+    renderWorkModal();
+    openModal('workModal');
+
+    // Таймер
+    if (activeTimer) clearInterval(activeTimer);
+    let secondsLeft = task.timerMin * 60;
+    const timerEl = $('timerDisplay');
+    timerEl.classList.add('active');
+    const updateTimer = () => {
+        const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+        const s = String(secondsLeft % 60).padStart(2, '0');
+        timerEl.textContent = '⏱ ' + m + ':' + s;
+        if (secondsLeft <= 0) {
+            clearInterval(activeTimer);
+            timerEl.classList.remove('active');
+            toast('Время вышло! Работа отправляется...', 'error');
+            finishWork(true);
+        }
+        secondsLeft--;
+    };
+    updateTimer();
+    activeTimer = setInterval(updateTimer, 1000);
+}
+
+function renderWorkModal() {
+    const content = $('workModalContent');
+    const task = currentTask;
+
+    if (workFinished) return; // финальный экран рендерится отдельно
+
+    // Навигация кружками
+    let navHtml = `<div class="q-nav">`;
+    task.questions.forEach((q, i) => {
+        const ans = currentAnswers[i];
+        const answeredClass = ans.answered ? 'answered' : '';
+        const activeClass = i === currentQuestionIdx ? 'active' : '';
+        navHtml += `<button class="q-nav-circle ${answeredClass} ${activeClass}" data-goto="${i}">
+            ${i + 1}
+            ${ans.answered ? '<span class="check-mark">✓</span>' : ''}
+        </button>`;
+    });
+    navHtml += `</div>`;
+
+    // Прогресс
+    const answeredCount = currentAnswers.filter(a => a.answered).length;
+    const progressHtml = `<div class="q-progress">
+        <span>Отвечено: ${answeredCount} из ${task.questions.length}</span>
+        <span>Вопрос ${currentQuestionIdx + 1} из ${task.questions.length}</span>
+    </div>`;
+
+    // Шаги вопросов
+    let stepsHtml = '';
+    task.questions.forEach((q, i) => {
+        const ans = currentAnswers[i];
+        const activeClass = i === currentQuestionIdx ? 'active' : '';
+        stepsHtml += `<div class="q-step ${activeClass}" data-step="${i}">`;
+        stepsHtml += `<div class="q-step-title"><span class="num-badge">Вопрос ${i+1}</span></div>`;
+        stepsHtml += `<div class="q-step-text">${escapeHtml(q.text)}</div>`;
+
+        if (q.files && q.files.length) {
+            stepsHtml += `<div class="q-step-files" data-step-files="${i}">${renderFilesForView(q.files, 'st-q' + i)}</div>`;
+        }
+
+        stepsHtml += `<div class="q-step-answers">`;
+
+        if (q.type === 'choice') {
+            q.answers.forEach((a, ai) => {
+                const sel = (ans.text === a.text && ans.answered) ? 'selected' : '';
+                stepsHtml += `<label class="q-step-answer ${sel}" data-pick-q="${i}" data-pick-a="${ai}">
+                    <input type="radio" name="wq${i}" ${sel ? 'checked' : ''} data-wq="${i}" data-wa="${ai}">
+                    <span class="ans-text">${escapeHtml(a.text)}</span>
+                </label>`;
+            });
+        } else {
+            stepsHtml += `<textarea class="q-step-textarea" data-wtext="${i}" placeholder="Напиши ответ... (Enter = новая строка)">${escapeHtml(ans.text || '')}</textarea>`;
+        }
+        stepsHtml += `</div>`;
+
+        // Навигация
+        const isLast = i === task.questions.length - 1;
+        stepsHtml += `<div class="q-step-nav">`;
+        if (i > 0) stepsHtml += `<button class="prev-btn" data-prev="${i}">← Назад</button>`;
+        if (!isLast) stepsHtml += `<button class="next-btn" data-next="${i}">Далее →</button>`;
+        else stepsHtml += `<button class="finish-btn" data-finish="1">✅ Завершить</button>`;
+        stepsHtml += `</div>`;
+
+        stepsHtml += `</div>`;
+    });
+
+    content.innerHTML = navHtml + progressHtml + stepsHtml;
+
+    // Обработчики кружков
+    content.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
+        currentQuestionIdx = parseInt(b.dataset.goto);
+        renderWorkModal();
+    }));
+
+    // Обработчики выбора
+    content.querySelectorAll('.q-step-answer').forEach(lbl => {
+        lbl.addEventListener('click', () => {
+            const qi = parseInt(lbl.dataset.pickQ);
+            const ai = parseInt(lbl.dataset.pickA);
+            const q = task.questions[qi];
+            currentAnswers[qi].text = q.answers[ai].text;
+            currentAnswers[qi].answered = true;
+            renderWorkModal();
+        });
+    });
+
+    // Обработчики textarea
+    content.querySelectorAll('.q-step-textarea').forEach(ta => {
+        ta.addEventListener('input', () => {
+            const qi = parseInt(ta.dataset.wtext);
+            currentAnswers[qi].text = ta.value;
+            currentAnswers[qi].answered = ta.value.trim().length > 0;
+            // обновляем кружок без полного рендера
+            const circle = content.querySelector(`[data-goto="${qi}"]`);
+            if (circle) {
+                if (currentAnswers[qi].answered && !circle.classList.contains('answered')) {
+                    circle.classList.add('answered');
+                    if (!circle.querySelector('.check-mark')) {
+                        const cm = document.createElement('span');
+                        cm.className = 'check-mark';
+                        cm.textContent = '✓';
+                        circle.appendChild(cm);
+                    }
+                } else if (!currentAnswers[qi].answered && circle.classList.contains('answered')) {
+                    circle.classList.remove('answered');
+                    const cm = circle.querySelector('.check-mark');
+                    if (cm) cm.remove();
+                }
+            }
+        });
+    });
+
+    // Обработчики навигации
+    content.querySelectorAll('[data-prev]').forEach(b => b.addEventListener('click', () => {
+        currentQuestionIdx = Math.max(0, parseInt(b.dataset.prev) - 1);
+        renderWorkModal();
+    }));
+    content.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => {
+        currentQuestionIdx = Math.min(task.questions.length - 1, parseInt(b.dataset.next) + 1);
+        renderWorkModal();
+    }));
+    content.querySelectorAll('[data-finish]').forEach(b => b.addEventListener('click', () => {
+        confirmFinish();
+    }));
+
+    // Клики по файлам
+    task.questions.forEach((q, i) => {
+        if (q.files && q.files.length) {
+            const wrap = content.querySelector(`[data-step-files="${i}"]`);
+            if (wrap) attachFileClickHandlers(wrap, q.files);
+        }
+    });
+}
+
+function confirmFinish() {
+    const total = currentTask.questions.length;
+    const answered = currentAnswers.filter(a => a.answered).length;
+    const unanswered = [];
+    currentAnswers.forEach((a, i) => { if (!a.answered) unanswered.push(i + 1); });
+
+    let msg = '';
+    if (unanswered.length === 0) {
+        msg = 'Ты ответил на все вопросы. Завершить работу?';
+    } else {
+        msg = 'Ты не ответил на вопросы: ' + unanswered.join(', ') + '. Всё равно завершить?';
+    }
+    if (confirm(msg)) {
+        finishWork(false);
+    }
+}
+
+async function finishWork(forced) {
+    if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+    $('timerDisplay').classList.remove('active');
+
+    try {
+        const task = currentTask;
+        let autoGrade = null;
+        if (task.mode === 'auto') {
+            let correct = 0;
+            task.questions.forEach((q, i) => {
+                const ans = currentAnswers[i].text;
+                if (q.type === 'choice') {
+                    const correctAns = (q.answers.find(a => a.correct) || {}).text;
+                    if (correctAns && ans === correctAns) correct++;
+                } else {
+                    if (q.checkMode !== 'manual' && q.correctText.trim().toLowerCase() === ans.trim().toLowerCase()) correct++;
+                }
+            });
+            const pct = correct / task.questions.length;
+            if (pct >= 0.85) autoGrade = 5;
+            else if (pct >= 0.65) autoGrade = 4;
+            else if (pct >= 0.45) autoGrade = 3;
+            else autoGrade = 2;
+        }
+
+        const subRef = fb.push(fb.ref('teachlexa/submissions'));
+        const subData = {
+            taskId: task.id,
+            taskTitle: task.title,
+            taskCategory: task.category || 'dz',
+            category: task.category || 'dz',
+            studentKey: currentUserKey,
+            studentName: currentUser.name,
+            answers: currentAnswers.map(a => ({ text: a.text })),
+            submittedAt: Date.now(),
+            status: autoGrade ? 'graded' : 'submitted'
+        };
+        if (autoGrade) {
+            subData.grade = autoGrade;
+            subData.gradedAt = Date.now();
+        }
+        await fb.set(subRef, subData);
+
+        workFinished = true;
+        showFinishScreen(autoGrade);
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка: ' + (e.message || e), 'error');
+    }
+}
+
+function showFinishScreen(autoGrade) {
+    $('closeWorkModalBtn').style.display = 'none';
+    const content = $('workModalContent');
+    const isExam = CATEGORIES[currentTask.category || 'dz'].isExam;
+
+    let resultBlock = '';
+    if (autoGrade) {
+        if (isExam) {
+            resultBlock = `<div style="margin:20px 0;color:#4a9eff;font-size:18px;font-weight:800;">Работа проверена автоматически</div>`;
+        } else {
+            resultBlock = `<div style="margin:20px 0;display:flex;align-items:center;justify-content:center;gap:16px;">
+                <div class="grade grade-${autoGrade}" style="width:80px;height:80px;font-size:36px;">${autoGrade}</div>
+                <div style="color:#88bb99;font-size:16px;">Твоя оценка</div>
+            </div>`;
+        }
+    }
+
+    content.innerHTML = `
+        <div class="finish-screen">
+            <div class="finish-icon">✅</div>
+            <h2>Работа отправлена!</h2>
+            <p>Учитель скоро проверит её и выставит оценку. Ты можешь увидеть результат в разделе «🏆 Оценки».</p>
+            ${resultBlock}
+            <div class="finish-actions">
+                <button class="btn btn-primary" id="backToListBtn" style="margin:0;">← Вернуться к заданиям</button>
+            </div>
+        </div>
+    `;
+
+    $('backToListBtn').addEventListener('click', () => {
+        closeModal('workModal');
+        // Не даём открыть заново — просто вернёмся к категории, где было задание
+        const catTabMap = { vpr: 's_vpr', kr: 's_kr', dz: 's_dz', oge: 's_oge', ege: 's_ege' };
+        switchTab(catTabMap[currentTask.category || 'dz'] || 's_dz');
+    });
+}
+
+/* ====== УЧЕНИК: МОИ ОЦЕНКИ ====== */
+function renderResults(submissions) {
+    const list = $('resultsList');
+    if (!list || !currentUser) return;
+
+    const mySubs = Object.entries(submissions)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.studentKey === currentUserKey)
+        .sort((a,b) => (b.submittedAt||0) - (a.submittedAt||0));
+
+    if (mySubs.length === 0) { list.innerHTML = '<div class="empty">Ты ещё не сдал ни одной работы</div>'; return; }
+
+    const graded = mySubs.filter(s => s.status === 'graded');
+    let totalSum = 0, countSum = 0;
+    graded.forEach(s => {
+        if (s.grade) { totalSum += s.grade; countSum++; }
+        else if (s.score != null && s.maxScore) { totalSum += (s.score / s.maxScore) * 5; countSum++; }
+    });
+    const avg = countSum > 0 ? (totalSum / countSum) : 0;
+    const avgFormatted = countSum > 0 ? (avg % 1 === 0 ? avg.toString() : avg.toFixed(2)) : '—';
+
+    let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:22px;">
+        <div class="card" style="text-align:center;margin:0;">
+            <div style="font-size:42px;font-weight:900;color:#ffdd44;">${avgFormatted}</div>
+            <div style="color:#8899bb;font-size:11px;letter-spacing:2px;">СРЕДНИЙ БАЛЛ</div>
+        </div>
+        <div class="card" style="text-align:center;margin:0;">
+            <div style="font-size:42px;font-weight:900;color:#44ff88;">${graded.length}</div>
+            <div style="color:#8899bb;font-size:11px;letter-spacing:2px;">ОЦЕНОК</div>
+        </div>
+    </div>`;
+
+    mySubs.forEach(sub => {
+        const isExam = CATEGORIES[sub.category || 'dz'].isExam;
+        let resultHtml;
+        if (sub.status === 'graded') {
+            if (isExam && sub.score != null) resultHtml = `<div class="score-display">${sub.score} / ${sub.maxScore}</div>`;
+            else resultHtml = `<div class="grade grade-${sub.grade}">${sub.grade}</div>`;
+        } else {
+            resultHtml = `<span class="badge badge-yellow">На проверке</span>`;
+        }
+        html += `<div class="card">
+            <div class="card-header" style="margin:0;">
+                <div>
+                    <div class="card-title" style="font-size:16px;">${escapeHtml(sub.taskTitle)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span class="badge badge-purple">${CATEGORIES[sub.category || 'dz'].name}</span>
+                        <span>📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</span>
+                    </div>
+                </div>
+                ${resultHtml}
+            </div>
+        </div>`;
+    });
+
+    list.innerHTML = html;
+}
+
+/* ====== АВТОПОДГОНКА ====== */
+document.addEventListener('input', (e) => {
+    if (e.target.tagName === 'TEXTAREA' && e.target.id !== 'studentPassword' && e.target.id !== 'teacherPassword') {
+        autoResize(e.target);
+    }
+});
+window.addEventListener('load', () => {
+    document.querySelectorAll('textarea').forEach(autoResize);
+});
+
+/* Блокируем закрытие модалки прохождения по фону, если работа не завершена */
+$('workModal').addEventListener('click', (e) => {
+    if (e.target === $('workModal')) {
+        // клик по фону — ничего не делаем
+    }
+});
+$('closeWorkModalBtn').addEventListener('click', () => {
+    if (workFinished) {
+        closeModal('workModal');
+    } else {
+        if (confirm('Выйти без отправки? Ответы не сохранятся.')) {
+            if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+            $('timerDisplay').classList.remove('active');
+            closeModal('workModal');
+        }
+    }
+});
+
+</script>
+
+</body>
+</html>
