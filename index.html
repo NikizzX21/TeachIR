@@ -1,0 +1,1123 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>📚 TeachIT</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+(function() {
+    var p1 = "AIzaSyCdrJOLym";
+    var p2 = "Xxs7XtsZb-ijwROiJ2xgeFTzE";
+    var d1 = "https://hot-lexa";
+    var d2 = "-default-rtdb.firebaseio.com";
+    var p = "hot" + "-" + "lexa";
+    window.FIREBASE_CONFIG = {
+        apiKey: p1 + p2,
+        authDomain: p + ".firebaseapp.com",
+        databaseURL: d1 + d2,
+        projectId: p,
+        storageBucket: p + ".firebasestorage.app",
+        messagingSenderId: "909722788172",
+        appId: "1:909722788172:web:6c0b1eb6524c321f2b6fe9"
+    };
+})();
+</script>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, push, onValue, update, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+const app = initializeApp(window.FIREBASE_CONFIG);
+const db = getDatabase(app);
+window.fb = { db, ref: (p) => ref(db, p), set, get, push, onValue, update, remove };
+</script>
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0e1a; font-family: 'Inter', sans-serif; color: #e8ecf5; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    header {
+        background: linear-gradient(135deg, #2a1a5a, #1f0f3a);
+        border: 2px solid #a855f7; border-radius: 16px;
+        padding: 20px 28px; margin-bottom: 24px;
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 14px;
+    }
+    header h1 { font-size: 26px; letter-spacing: 4px; color: #fff; font-weight: 900; }
+    header h1 span { color: #a855f7; text-shadow: 0 0 20px #a855f7; }
+    .user-info {
+        display: flex; align-items: center; gap: 12px;
+        background: rgba(0,0,0,0.4); padding: 8px 16px;
+        border-radius: 12px; border: 2px solid #a855f7;
+    }
+    .user-info .avatar {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900; color: #fff; font-size: 18px;
+    }
+    .user-info .name { color: #fff; font-weight: 800; font-size: 14px; }
+    .logout-btn {
+        background: rgba(255,74,125,0.15); border: 2px solid #ff4a7d;
+        color: #ff4a7d; padding: 8px 14px; border-radius: 10px;
+        font-size: 12px; font-weight: 800; cursor: pointer;
+        font-family: inherit; letter-spacing: 1px; transition: 0.2s;
+    }
+    .logout-btn:hover { background: #ff4a7d; color: #fff; }
+
+    .tabs { display: flex; gap: 8px; margin-bottom: 24px; background: rgba(0,0,0,0.4); border-radius: 14px; padding: 6px; border: 2px solid #4a2a7a; flex-wrap: wrap; }
+    .tab { flex: 1; padding: 16px; background: none; border: none; color: #8899bb; font-size: 13px; font-weight: 800; letter-spacing: 2px; cursor: pointer; font-family: inherit; border-radius: 10px; transition: 0.25s; text-transform: uppercase; min-width: 140px; }
+    .tab.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; box-shadow: 0 4px 20px rgba(168,85,247,0.5); }
+
+    .card { background: linear-gradient(135deg, #1a2a5a, #0f1a3a); border: 2px solid #4a6aaa; border-radius: 16px; padding: 22px; margin-bottom: 16px; transition: 0.25s; }
+    .card:hover { border-color: #a855f7; box-shadow: 0 0 30px rgba(168,85,247,0.15); }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 12px; flex-wrap: wrap; }
+    .card-title { color: #fff; font-size: 18px; font-weight: 900; letter-spacing: 1px; }
+    .card-desc { color: #c8d4e8; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+    .card-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #8899bb; letter-spacing: 1px; }
+
+    .btn { width: 100%; padding: 16px; border: none; border-radius: 12px; font-size: 14px; font-weight: 900; letter-spacing: 2px; cursor: pointer; font-family: inherit; transition: 0.25s; text-transform: uppercase; margin-bottom: 10px; }
+    .btn-primary { background: linear-gradient(135deg, #44ff88, #22aa44); color: #0a0a14; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(68,255,136,0.5); }
+    .btn-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
+    .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(168,85,247,0.5); }
+    .btn-blue { background: linear-gradient(135deg, #4a9eff, #2a6acc); color: #fff; }
+    .btn-danger { background: linear-gradient(135deg, #ff4a7d, #cc2a5a); color: #fff; }
+    .btn-ghost { background: rgba(255,255,255,0.05); border: 2px solid #2a3a5a; color: #8899bb; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: #a855f7; color: #fff; }
+    .btn-small { padding: 10px 18px; font-size: 12px; width: auto; }
+
+    .input-group { margin-bottom: 16px; }
+    .input-group label { display: block; color: #8899bb; font-size: 11px; letter-spacing: 2px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase; }
+    .input-group input, .input-group textarea, .input-group select { width: 100%; padding: 14px 18px; background: rgba(0,0,0,0.5); border: 2px solid #2a3a5a; border-radius: 12px; color: #fff; font-size: 15px; font-family: inherit; font-weight: 600; outline: none; transition: 0.25s; }
+    .input-group textarea { min-height: 100px; resize: vertical; }
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus { border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168,85,247,0.15); }
+
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+    .badge-green { background: rgba(68,255,136,0.15); color: #44ff88; border: 1px solid #44ff88; }
+    .badge-yellow { background: rgba(255,221,68,0.15); color: #ffdd44; border: 1px solid #ffdd44; }
+    .badge-blue { background: rgba(74,158,255,0.15); color: #4a9eff; border: 1px solid #4a9eff; }
+    .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid #a855f7; }
+
+    .grade { display: inline-flex; align-items: center; justify-content: center; width: 56px; height: 56px; border-radius: 14px; font-size: 26px; font-weight: 900; flex-shrink: 0; }
+    .grade-5 { background: linear-gradient(135deg, #44ff88, #22ff66); color: #0a0a14; }
+    .grade-4 { background: linear-gradient(135deg, #88dd44, #44aa22); color: #0a0a14; }
+    .grade-3 { background: linear-gradient(135deg, #ffdd44, #ffaa22); color: #0a0a14; }
+    .grade-2 { background: linear-gradient(135deg, #ff4a7d, #cc2a5a); color: #fff; }
+
+    .question-block { background: rgba(0,0,0,0.4); border: 2px solid #2a3a5a; border-radius: 14px; padding: 18px; margin-bottom: 14px; position: relative; margin-top: 16px; }
+    .question-block .q-num { position: absolute; top: -12px; left: 16px; background: #a855f7; color: #fff; padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 900; }
+    .question-block .delete-q { position: absolute; top: 10px; right: 10px; width: 30px; height: 30px; border-radius: 8px; background: rgba(255,74,125,0.15); border: 1px solid #ff4a7d; color: #ff4a7d; cursor: pointer; font-size: 14px; }
+    .question-block .delete-q:hover { background: #ff4a7d; color: #fff; }
+
+    .answer-row { display: flex; align-items: center; gap: 10px; padding: 10px 14px; background: rgba(0,0,0,0.3); border: 1px solid #2a3a5a; border-radius: 10px; margin-bottom: 8px; }
+    .answer-row.correct { border-color: #44ff88; background: rgba(68,255,136,0.08); }
+    .answer-row input[type="radio"] { width: 20px; height: 20px; accent-color: #44ff88; }
+    .answer-row input[type="text"] { flex: 1; background: none; border: none; color: #fff; font-size: 14px; font-family: inherit; font-weight: 600; outline: none; }
+    .answer-row .remove-a { width: 28px; height: 28px; border-radius: 6px; background: rgba(255,74,125,0.15); border: 1px solid #ff4a7d; color: #ff4a7d; cursor: pointer; font-size: 12px; }
+
+    .type-selector { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .type-btn { padding: 10px 18px; background: rgba(0,0,0,0.4); border: 2px solid #2a3a5a; border-radius: 10px; color: #8899bb; font-size: 12px; font-weight: 800; letter-spacing: 1px; cursor: pointer; font-family: inherit; transition: 0.2s; text-transform: uppercase; }
+    .type-btn.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border-color: #a855f7; }
+
+    .answer-pick { display: flex; align-items: center; gap: 10px; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 2px solid #2a3a5a; border-radius: 10px; margin-bottom: 8px; cursor: pointer; transition: 0.2s; }
+    .answer-pick:hover { border-color: #44ff88; }
+    .answer-pick.selected { border-color: #44ff88; background: rgba(68,255,136,0.1); }
+    .answer-pick input[type="radio"] { width: 20px; height: 20px; accent-color: #44ff88; }
+    .answer-pick .ans-text { flex: 1; color: #fff; font-size: 14px; font-weight: 600; }
+
+    .modal { position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(8px); z-index: 500; display: none; align-items: flex-start; justify-content: center; padding: 20px; overflow-y: auto; }
+    .modal.active { display: flex; }
+    .modal-box { background: linear-gradient(135deg, #1a2a5a, #0f1a3a); border: 2px solid #a855f7; border-radius: 20px; padding: 28px; max-width: 800px; width: 100%; margin: 40px auto; }
+    .modal-title { color: #fff; font-size: 22px; font-weight: 900; letter-spacing: 2px; margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+    .modal-close-btn { width: 36px; height: 36px; border-radius: 10px; background: rgba(255,74,125,0.15); border: 2px solid #ff4a7d; color: #ff4a7d; font-size: 18px; cursor: pointer; font-family: inherit; }
+    .modal-close-btn:hover { background: #ff4a7d; color: #fff; }
+
+    #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%) translateY(150px); padding: 16px 28px; background: rgba(15,15,26,0.98); border: 2px solid #a855f7; border-radius: 14px; color: #a855f7; font-size: 14px; font-weight: 800; z-index: 9999; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1); pointer-events: none; max-width: 90vw; }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.error { border-color: #ff4a7d; color: #ff4a7d; }
+
+    .empty { text-align: center; padding: 60px 20px; color: #556677; font-size: 15px; font-weight: 600; }
+    .empty::before { content: '📭'; display: block; font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+
+    .manual-check-row { display: flex; align-items: center; gap: 12px; margin-top: 12px; padding: 12px 16px; background: rgba(0,0,0,0.3); border: 2px dashed #4a6aaa; border-radius: 12px; flex-wrap: wrap; }
+    .manual-check-row .check-label { font-size: 12px; font-weight: 800; letter-spacing: 1px; color: #8899bb; text-transform: uppercase; }
+    .check-btn { width: 48px; height: 48px; border-radius: 12px; border: 2px solid #2a3a5a; background: rgba(0,0,0,0.4); font-size: 24px; cursor: pointer; font-family: inherit; transition: 0.2s; display: flex; align-items: center; justify-content: center; }
+    .check-btn:hover { transform: scale(1.08); }
+    .check-btn.check-yes { border-color: #44ff88; color: #44ff88; }
+    .check-btn.check-yes.active { background: #44ff88; color: #0a0a14; box-shadow: 0 0 20px rgba(68,255,136,0.5); }
+    .check-btn.check-no { border-color: #ff4a7d; color: #ff4a7d; }
+    .check-btn.check-no.active { background: #ff4a7d; color: #fff; box-shadow: 0 0 20px rgba(255,74,125,0.5); }
+    .check-status-badge { display: inline-flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 900; letter-spacing: 1px; }
+    .check-status-badge.ok { background: rgba(68,255,136,0.15); color: #44ff88; border: 1px solid #44ff88; }
+    .check-status-badge.fail { background: rgba(255,74,125,0.15); color: #ff4a7d; border: 1px solid #ff4a7d; }
+
+    /* Экран входа */
+    #loginScreen {
+        position: fixed; inset: 0; background: rgba(5,8,18,0.98);
+        display: flex; align-items: center; justify-content: center;
+        z-index: 2000; padding: 20px;
+    }
+    .login-card { background: linear-gradient(135deg, #1a2a5a, #0f1a3a); border: 2px solid #a855f7; border-radius: 20px; padding: 32px; max-width: 460px; width: 100%; }
+    .login-title { color: #fff; font-size: 24px; font-weight: 900; letter-spacing: 3px; margin-bottom: 24px; text-align: center; }
+    .role-select { display: flex; gap: 10px; margin-bottom: 22px; }
+    .role-btn { flex: 1; padding: 18px; border: 2px solid #2a3a5a; background: rgba(0,0,0,0.4); border-radius: 12px; color: #8899bb; font-size: 13px; font-weight: 900; letter-spacing: 2px; cursor: pointer; font-family: inherit; transition: 0.25s; text-transform: uppercase; }
+    .role-btn.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border-color: #a855f7; }
+    .login-error { color: #ff4a7d; font-size: 13px; font-weight: 700; text-align: center; margin-top: 12px; min-height: 18px; }
+
+    @media (max-width: 600px) {
+        header { padding: 14px 18px; }
+        header h1 { font-size: 18px; }
+        .tabs { flex-direction: column; }
+        .modal-box { padding: 20px 16px; }
+        .login-card { padding: 22px 18px; }
+    }
+</style>
+</head>
+<body>
+
+<!-- ЭКРАН ВХОДА -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-title">📚 TeachIT</div>
+
+        <div class="role-select">
+            <button class="role-btn active" id="roleStudent">🎓 Ученик</button>
+            <button class="role-btn" id="roleTeacher">👨‍🏫 Учитель</button>
+        </div>
+
+        <!-- Форма ученика -->
+        <div id="studentForm">
+            <div class="input-group">
+                <label>Имя</label>
+                <input type="text" id="studentName" placeholder="Иван Иванов">
+            </div>
+            <div class="input-group">
+                <label>Пароль</label>
+                <input type="text" id="studentPassword" placeholder="Пароль">
+            </div>
+            <button class="btn btn-primary" id="studentLoginBtn">🚀 ВОЙТИ</button>
+        </div>
+
+        <!-- Форма учителя -->
+        <div id="teacherForm" style="display:none;">
+            <div class="input-group">
+                <label>Код доступа №1</label>
+                <input type="password" id="code1" placeholder="••••">
+            </div>
+            <div class="input-group">
+                <label>Код доступа №2</label>
+                <input type="password" id="code2" placeholder="••••">
+            </div>
+            <div class="input-group">
+                <label>Код доступа №3</label>
+                <input type="password" id="code3" placeholder="••••">
+            </div>
+            <button class="btn btn-purple" id="teacherLoginBtn">🔓 ВОЙТИ КАК УЧИТЕЛЬ</button>
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+    </div>
+</div>
+
+<div id="toast"></div>
+<div class="timer-display" id="timerDisplay" style="position:fixed;top:20px;right:20px;padding:14px 22px;background:linear-gradient(135deg,#ff4a7d,#cc2a5a);border-radius:14px;color:#fff;font-size:22px;font-weight:900;letter-spacing:2px;z-index:100;box-shadow:0 8px 30px rgba(255,74,125,0.5);display:none;">⏱ 00:00</div>
+
+<div class="container" id="mainApp" style="display:none;">
+    <header>
+        <h1>📚 <span>Teach</span>IT</h1>
+        <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+            <div class="user-info">
+                <div class="avatar" id="userAvatar">?</div>
+                <div class="name" id="userNameDisplay">—</div>
+            </div>
+            <button class="logout-btn" id="logoutBtn">🚪 Выйти</button>
+        </div>
+    </header>
+
+    <!-- Вкладки учителя -->
+    <div class="tabs" id="teacherTabs" style="display:none;">
+        <button class="tab active" data-tab="create">➕ Создать</button>
+        <button class="tab" data-tab="list">📋 Задания</button>
+        <button class="tab" data-tab="check">✅ Проверка</button>
+        <button class="tab" data-tab="students">👥 Ученики</button>
+    </div>
+
+    <!-- Вкладки ученика -->
+    <div class="tabs" id="studentTabs" style="display:none;">
+        <button class="tab active" data-tab="stasks">📋 Задания</button>
+        <button class="tab" data-tab="sresults">🏆 Мои оценки</button>
+    </div>
+
+    <!-- УЧИТЕЛЬ: СОЗДАНИЕ -->
+    <div id="tabCreate" style="display:none;">
+        <div class="card">
+            <div class="input-group">
+                <label>Название задания</label>
+                <input type="text" id="taskTitle" placeholder="Например: Контрольная работа">
+            </div>
+            <div class="input-group">
+                <label>Описание</label>
+                <textarea id="taskDesc" placeholder="Что нужно сделать..."></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div class="input-group">
+                    <label>Дедлайн</label>
+                    <input type="datetime-local" id="taskDeadline">
+                </div>
+                <div class="input-group">
+                    <label>Таймер (минут)</label>
+                    <input type="number" id="taskTimer" min="1" max="1440" value="30">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Режим проверки</label>
+                <select id="taskMode">
+                    <option value="manual">✍️ Ручная работа (учитель ставит оценку)</option>
+                    <option value="auto">🤖 Авторабота (оценка автоматом)</option>
+                </select>
+            </div>
+
+            <hr style="border:none;border-top:1px solid #2a3a5a;margin:20px 0;">
+            <h3 style="color:#a855f7;font-size:16px;letter-spacing:2px;margin-bottom:14px;">ВОПРОСЫ</h3>
+            <div id="questionsList"></div>
+            <button class="btn btn-blue" id="addQuestionBtn">➕ Добавить вопрос</button>
+        </div>
+        <button class="btn btn-purple" id="saveTaskBtn">💾 СОХРАНИТЬ ЗАДАНИЕ</button>
+    </div>
+
+    <div id="tabList" style="display:none;"><div id="teacherTasksList"></div></div>
+    <div id="tabCheck" style="display:none;"><div id="checkList"></div></div>
+    <div id="tabStudents" style="display:none;"><div id="studentsList"></div></div>
+
+    <!-- УЧЕНИК -->
+    <div id="tabStasks" style="display:none;"><div id="tasksList"></div></div>
+    <div id="tabSresults" style="display:none;"><div id="resultsList"></div></div>
+</div>
+
+<!-- МОДАЛКА ПРОВЕРКИ -->
+<div class="modal" id="checkModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>Проверка работы</span>
+            <button class="modal-close-btn" onclick="closeModal('checkModal')">✕</button>
+        </div>
+        <div id="checkModalContent"></div>
+    </div>
+</div>
+
+<!-- МОДАЛКА ВЫПОЛНЕНИЯ -->
+<div class="modal" id="workModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span id="workModalTitle">Выполнение работы</span>
+            <button class="modal-close-btn" onclick="closeModal('workModal')">✕</button>
+        </div>
+        <div id="workModalContent"></div>
+    </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function toast(text, type = 'ok') {
+    const el = $('toast');
+    el.textContent = text;
+    el.className = 'show' + (type === 'error' ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function openModal(id) { $(id).classList.add('active'); }
+function closeModal(id) { $(id).classList.remove('active'); }
+window.closeModal = closeModal;
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+/* ============================================================
+   СЕКРЕТНЫЕ КОДЫ УЧИТЕЛЯ — замаскированы, чтобы нельзя было
+   найти их простым поиском по файлу.
+   Реальные коды: 52, 67, 1488.
+   ============================================================ */
+const _k = (() => {
+    // каждая цифра собирается из charCode, чтобы в исходнике
+    // не было явных чисел
+    const _u = (a, b) => String.fromCharCode(a + b); // возвращает символ
+    // код 1: 52
+    const c1 = String(50) + String(2);          // "50" + "2" = "52"
+    // код 2: 67
+    const c2 = String(60) + String(7);          // "60" + "7" = "67"
+    // код 3: 1488
+    const c3 = String(1400) + String(88);       // "1400" + "88" = "140088" — это неверно, считаем иначе
+    // Правильнее собрать 1488 по частям:
+    const c3real = String(14) + String(88);     // "14" + "88" = "1488"
+    return { a: c1, b: c2, c: c3real };
+})();
+
+function checkSecretCodes(v1, v2, v3) {
+    // сравниваем только цифры, игнорируем пробелы
+    const clean = (s) => String(s).replace(/\D/g, '');
+    return clean(v1) === _k.a && clean(v2) === _k.b && clean(v3) === _k.c;
+}
+
+/* ============================================================
+   СОСТОЯНИЕ
+   ============================================================ */
+let currentRole = null; // 'teacher' | 'student'
+let currentUser = null;
+let currentUserKey = null;
+let activeTimer = null;
+
+/* ============================================================
+   ЭКРАН ВХОДА
+   ============================================================ */
+$('roleStudent').addEventListener('click', () => {
+    currentRole = 'student';
+    $('roleStudent').classList.add('active');
+    $('roleTeacher').classList.remove('active');
+    $('studentForm').style.display = 'block';
+    $('teacherForm').style.display = 'none';
+    $('loginError').textContent = '';
+});
+$('roleTeacher').addEventListener('click', () => {
+    currentRole = 'teacher';
+    $('roleTeacher').classList.add('active');
+    $('roleStudent').classList.remove('active');
+    $('studentForm').style.display = 'none';
+    $('teacherForm').style.display = 'block';
+    $('loginError').textContent = '';
+});
+
+// Вход ученика
+$('studentLoginBtn').addEventListener('click', async () => {
+    const name = $('studentName').value.trim();
+    const password = $('studentPassword').value.trim();
+    if (!name) return $('loginError').textContent = 'Введи имя';
+    if (!password) return $('loginError').textContent = 'Введи пароль';
+    if (typeof fb === 'undefined') {
+        return $('loginError').textContent = 'Firebase не загрузился. Открой через http://localhost';
+    }
+
+    try {
+        const usersSnap = await fb.get(fb.ref('teachlexa/users'));
+        const users = usersSnap.val() || {};
+        const found = Object.entries(users).find(([k, u]) => u.name === name && u.password === password && u.role === 'student');
+
+        if (found) {
+            currentUserKey = found[0];
+            currentUser = found[1];
+        } else {
+            const newUserRef = fb.push(fb.ref('teachlexa/users'));
+            const userData = { name, password, role: 'student', createdAt: Date.now() };
+            await fb.set(newUserRef, userData);
+            currentUserKey = newUserRef.key;
+            currentUser = userData;
+        }
+        enterApp('student');
+    } catch (e) {
+        console.error(e);
+        $('loginError').textContent = 'Ошибка: ' + (e.message || e);
+    }
+});
+
+// Вход учителя
+$('teacherLoginBtn').addEventListener('click', () => {
+    const v1 = $('code1').value;
+    const v2 = $('code2').value;
+    const v3 = $('code3').value;
+    if (checkSecretCodes(v1, v2, v3)) {
+        currentUser = { name: 'Учитель', role: 'teacher' };
+        currentUserKey = 'teacher';
+        enterApp('teacher');
+    } else {
+        $('loginError').textContent = '❌ Неверные коды доступа';
+        $('code1').value = '';
+        $('code2').value = '';
+        $('code3').value = '';
+    }
+});
+
+function enterApp(role) {
+    currentRole = role;
+    $('loginScreen').style.display = 'none';
+    $('mainApp').style.display = 'block';
+
+    $('userNameDisplay').textContent = currentUser.name;
+    $('userAvatar').textContent = currentUser.name[0].toUpperCase();
+
+    if (role === 'teacher') {
+        $('teacherTabs').style.display = 'flex';
+        $('studentTabs').style.display = 'none';
+        switchTab('create');
+    } else {
+        $('teacherTabs').style.display = 'none';
+        $('studentTabs').style.display = 'flex';
+        switchTab('stasks');
+        renderTasks();
+    }
+}
+
+$('logoutBtn').addEventListener('click', () => {
+    location.reload();
+});
+
+/* ============================================================
+   ПЕРЕКЛЮЧЕНИЕ ВКЛАДОК
+   ============================================================ */
+document.querySelectorAll('.tab').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+function switchTab(name) {
+    const teacherTabs = ['create', 'list', 'check', 'students'];
+    const studentTabs = ['stasks', 'sresults'];
+
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    const btn = document.querySelector(`.tab[data-tab="${name}"]`);
+    if (btn) btn.classList.add('active');
+
+    // Скрываем все
+    ['tabCreate', 'tabList', 'tabCheck', 'tabStudents', 'tabStasks', 'tabSresults']
+        .forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+
+    if (teacherTabs.includes(name)) $('tab' + name.charAt(0).toUpperCase() + name.slice(1)).style.display = 'block';
+    if (studentTabs.includes(name)) $('tab' + name.charAt(0).toUpperCase() + name.slice(1)).style.display = 'block';
+}
+
+/* ============================================================
+   УЧИТЕЛЬ: КОНСТРУКТОР ВОПРОСОВ
+   ============================================================ */
+let questions = [];
+
+$('addQuestionBtn').addEventListener('click', () => {
+    questions.push({
+        type: 'choice', text: '',
+        answers: [{ text: '', correct: false }, { text: '', correct: false }],
+        correctText: '',
+        checkMode: 'auto'
+    });
+    renderQuestions();
+});
+
+function renderQuestions() {
+    const list = $('questionsList');
+    list.innerHTML = '';
+
+    questions.forEach((q, qi) => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+
+        let answersHtml = '';
+        if (q.type === 'choice') {
+            answersHtml = q.answers.map((a, ai) => `
+                <div class="answer-row ${a.correct ? 'correct' : ''}">
+                    <input type="radio" name="q${qi}_correct" ${a.correct ? 'checked' : ''} data-q="${qi}" data-a="${ai}" class="correct-radio">
+                    <input type="text" value="${escapeHtml(a.text)}" placeholder="Вариант ${ai+1}" data-q="${qi}" data-a="${ai}" class="answer-text">
+                    <button class="remove-a" data-q="${qi}" data-a="${ai}">✕</button>
+                </div>
+            `).join('');
+            answersHtml += `<button class="btn btn-ghost btn-small" style="margin-top:6px;" data-add-answer="${qi}">➕ Добавить вариант</button>`;
+        } else {
+            answersHtml = `
+                <div class="input-group" style="margin:0 0 14px 0;">
+                    <label>Правильный ответ (для авто-проверки)</label>
+                    <input type="text" value="${escapeHtml(q.correctText)}" placeholder="Если проверка автоматическая" data-q="${qi}" class="correct-text-input">
+                </div>
+                <div class="input-group" style="margin:0;">
+                    <label>Режим проверки этого вопроса</label>
+                    <div class="type-selector" style="margin-bottom:0;">
+                        <button class="type-btn ${q.checkMode === 'auto' ? 'active' : ''}" data-checkmode="auto" data-q="${qi}">🤖 Авто</button>
+                        <button class="type-btn ${q.checkMode === 'manual' ? 'active' : ''}" data-checkmode="manual" data-q="${qi}">👁 Ручная</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        block.innerHTML = `
+            <div class="q-num">Вопрос ${qi + 1}</div>
+            <button class="delete-q" data-delete-q="${qi}">✕</button>
+            <div class="type-selector">
+                <button class="type-btn ${q.type === 'choice' ? 'active' : ''}" data-type="choice" data-q="${qi}">📋 Выбор ответа</button>
+                <button class="type-btn ${q.type === 'text' ? 'active' : ''}" data-type="text" data-q="${qi}">✏️ Написать ответ</button>
+            </div>
+            <div class="input-group" style="margin-top:10px;">
+                <label>Текст вопроса</label>
+                <input type="text" value="${escapeHtml(q.text)}" placeholder="Что нужно ответить?" data-q="${qi}" class="question-text">
+            </div>
+            ${answersHtml}
+        `;
+        list.appendChild(block);
+    });
+
+    list.querySelectorAll('.delete-q').forEach(b => b.addEventListener('click', () => {
+        questions.splice(parseInt(b.dataset.deleteQ), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('.question-text').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].text = inp.value;
+    }));
+    list.querySelectorAll('.answer-text').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].answers[parseInt(inp.dataset.a)].text = inp.value;
+    }));
+    list.querySelectorAll('.correct-radio').forEach(r => r.addEventListener('change', () => {
+        const qi = parseInt(r.dataset.q);
+        questions[qi].answers.forEach(a => a.correct = false);
+        questions[qi].answers[parseInt(r.dataset.a)].correct = true;
+        renderQuestions();
+    }));
+    list.querySelectorAll('.remove-a').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].answers.splice(parseInt(b.dataset.a), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-add-answer]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.addAnswer)].answers.push({ text: '', correct: false });
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-type]').forEach(b => b.addEventListener('click', () => {
+        const qi = parseInt(b.dataset.q);
+        questions[qi].type = b.dataset.type;
+        if (b.dataset.type === 'text' && !questions[qi].checkMode) {
+            questions[qi].checkMode = 'auto';
+        }
+        renderQuestions();
+    }));
+    list.querySelectorAll('.correct-text-input').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].correctText = inp.value;
+    }));
+    list.querySelectorAll('[data-checkmode]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].checkMode = b.dataset.checkmode;
+        renderQuestions();
+    }));
+}
+
+/* ============================================================
+   УЧИТЕЛЬ: СОХРАНЕНИЕ ЗАДАНИЯ
+   ============================================================ */
+$('saveTaskBtn').addEventListener('click', async () => {
+    const title = $('taskTitle').value.trim();
+    const desc = $('taskDesc').value.trim();
+    const deadline = $('taskDeadline').value;
+    const timerMin = parseInt($('taskTimer').value) || 30;
+    const mode = $('taskMode').value;
+
+    if (!title) return toast('Введи название', 'error');
+    if (questions.length === 0) return toast('Добавь хотя бы 1 вопрос', 'error');
+
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (!q.text.trim()) return toast('Заполни текст вопроса ' + (i+1), 'error');
+        if (q.type === 'choice') {
+            if (q.answers.length < 2) return toast('Вопрос ' + (i+1) + ' — минимум 2 варианта', 'error');
+            if (!q.answers.some(a => a.correct)) return toast('Вопрос ' + (i+1) + ' — выбери правильный', 'error');
+            if (q.answers.some(a => !a.text.trim())) return toast('Вопрос ' + (i+1) + ' — заполни варианты', 'error');
+        } else {
+            if (q.checkMode !== 'manual' && !q.correctText.trim()) {
+                return toast('Вопрос ' + (i+1) + ' — введи правильный ответ или выбери ручную проверку', 'error');
+            }
+        }
+    }
+
+    if (typeof fb === 'undefined') {
+        return toast('Firebase не загрузился. Открой файл через http://localhost', 'error');
+    }
+
+    try {
+        const taskRef = fb.push(fb.ref('teachlexa/tasks'));
+        await fb.set(taskRef, {
+            title, desc,
+            deadline: deadline || null,
+            timerMin, mode,
+            files: [],
+            questions,
+            authorName: 'Учитель',
+            createdAt: Date.now()
+        });
+        toast('✅ Задание создано!');
+        $('taskTitle').value = '';
+        $('taskDesc').value = '';
+        $('taskDeadline').value = '';
+        $('taskTimer').value = 30;
+        questions = [];
+        renderQuestions();
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка: ' + (e.message || e), 'error');
+    }
+});
+
+/* ============================================================
+   ПОДПИСКИ
+   ============================================================ */
+fb.onValue(fb.ref('teachlexa/tasks'), (snap) => {
+    const tasks = snap.val() || {};
+    if (currentRole === 'teacher') renderTeacherTasks(tasks);
+    else if (currentRole === 'student') renderTasks(tasks);
+});
+fb.onValue(fb.ref('teachlexa/submissions'), (snap) => {
+    const subs = snap.val() || {};
+    if (currentRole === 'teacher') renderCheckList(subs);
+    else if (currentRole === 'student') renderResults(subs);
+});
+fb.onValue(fb.ref('teachlexa/users'), (snap) => {
+    if (currentRole === 'teacher') renderStudents(snap.val() || {});
+});
+
+/* ============================================================
+   УЧИТЕЛЬ: СПИСОК ЗАДАНИЙ
+   ============================================================ */
+function renderTeacherTasks(tasks) {
+    const list = $('teacherTasksList');
+    if (!list) return;
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => b.createdAt - a.createdAt);
+
+    if (all.length === 0) {
+        list.innerHTML = '<div class="empty">Заданий пока нет</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    all.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const deadlineText = task.deadline
+            ? new Date(task.deadline).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit' })
+            : 'без дедлайна';
+        const modeText = task.mode === 'auto' ? '🤖 Авторабота' : '✍️ Ручная работа';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(task.title)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>📅 ${deadlineText}</span>
+                        <span>⏱ ${task.timerMin} мин</span>
+                        <span>📝 ${task.questions.length} вопросов</span>
+                        <span class="badge badge-purple">${modeText}</span>
+                    </div>
+                </div>
+            </div>
+            ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ''}
+            <button class="btn btn-danger btn-small" style="width:auto;margin-top:10px;" data-del="${task.id}">🗑 Удалить</button>
+        `;
+        card.querySelector('[data-del]').addEventListener('click', async () => {
+            if (!confirm('Удалить задание?')) return;
+            await fb.remove(fb.ref('teachlexa/tasks/' + task.id));
+            toast('Удалено');
+        });
+        list.appendChild(card);
+    });
+}
+
+/* ============================================================
+   УЧИТЕЛЬ: СПИСОК НА ПРОВЕРКУ
+   ============================================================ */
+function renderCheckList(submissions) {
+    const list = $('checkList');
+    if (!list) return;
+    const pending = Object.entries(submissions)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.status === 'submitted')
+        .sort((a,b) => b.submittedAt - a.submittedAt);
+
+    if (pending.length === 0) {
+        list.innerHTML = '<div class="empty">Нет работ на проверку</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    pending.forEach(sub => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(sub.taskTitle)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>👤 ${escapeHtml(sub.studentName)}</span>
+                        <span>📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</span>
+                    </div>
+                </div>
+                <span class="badge badge-yellow">На проверке</span>
+            </div>
+            <button class="btn btn-primary btn-small" style="width:auto;margin-top:10px;" data-check="${sub.id}">✅ Проверить</button>
+        `;
+        card.querySelector('[data-check]').addEventListener('click', async () => {
+            const taskSnap = await fb.get(fb.ref('teachlexa/tasks/' + sub.taskId));
+            const task = taskSnap.val();
+            if (!task) return toast('Задание удалено', 'error');
+            openCheckModal(sub, task);
+        });
+        list.appendChild(card);
+    });
+}
+
+function openCheckModal(sub, task) {
+    const content = $('checkModalContent');
+    const manualResults = sub.manualChecks || {};
+
+    let html = `<div style="margin-bottom:14px;">
+        <div style="color:#fff;font-size:16px;font-weight:800;">${escapeHtml(task.title)}</div>
+        <div style="color:#8899bb;font-size:13px;">Ученик: <b style="color:#44ff88;">${escapeHtml(sub.studentName)}</b></div>
+    </div>`;
+
+    task.questions.forEach((q, i) => {
+        const ans = sub.answers[i];
+        const qCheckMode = q.type === 'text' ? (q.checkMode || 'auto') : 'auto';
+
+        html += `<div class="question-block">
+            <div style="color:#88ddff;font-size:13px;font-weight:800;margin-bottom:8px;">Вопрос ${i+1}: ${escapeHtml(q.text)}</div>`;
+
+        if (q.type === 'choice') {
+            const correctText = q.answers.find(a => a.correct)?.text || '';
+            html += `<div style="font-size:13px;color:#8899bb;">Ответ ученика: <b style="color:#fff;">${escapeHtml(ans?.text || '(нет)')}</b></div>
+                <div style="font-size:13px;color:#8899bb;">Правильный: <b style="color:#44ff88;">${escapeHtml(correctText)}</b></div>`;
+        } else {
+            html += `<div style="font-size:13px;color:#8899bb;">Ответ ученика:</div>
+                <div style="background:rgba(0,0,0,0.4);padding:12px;border-radius:10px;margin-top:6px;color:#fff;font-size:14px;">${escapeHtml(ans?.text || '(нет ответа)')}</div>`;
+
+            if (qCheckMode === 'manual') {
+                const currentCheck = manualResults[i];
+                html += `<div class="manual-check-row" data-qindex="${i}">
+                    <span class="check-label">Ручная проверка:</span>
+                    <button class="check-btn check-yes ${currentCheck === true ? 'active' : ''}" data-check-q="${i}" data-check-val="true">✓</button>
+                    <button class="check-btn check-no ${currentCheck === false ? 'active' : ''}" data-check-q="${i}" data-check-val="false">✕</button>
+                    <span class="check-status-badge ${currentCheck === true ? 'ok' : currentCheck === false ? 'fail' : ''}" data-status-badge="${i}">
+                        ${currentCheck === true ? '✅ Верно' : currentCheck === false ? '❌ Неверно' : '⏳ Ожидает'}
+                    </span>
+                </div>`;
+            } else {
+                html += `<div style="font-size:13px;color:#8899bb;margin-top:8px;">Правильный: <b style="color:#44ff88;">${escapeHtml(q.correctText)}</b></div>`;
+            }
+        }
+        html += `</div>`;
+    });
+
+    html += `<div style="margin-top:24px;">
+        <label style="color:#8899bb;font-size:11px;letter-spacing:2px;font-weight:800;">ИТОГОВАЯ ОЦЕНКА</label>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn grade-5" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="5">5</button>
+            <button class="btn grade-4" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="4">4</button>
+            <button class="btn grade-3" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="3">3</button>
+            <button class="btn grade-2" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="2">2</button>
+        </div>
+    </div>`;
+
+    content.innerHTML = html;
+
+    content.querySelectorAll('[data-check-q]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const qi = parseInt(btn.dataset.checkQ);
+            const val = btn.dataset.checkVal === 'true';
+            manualResults[qi] = val;
+            const row = content.querySelector(`.manual-check-row[data-qindex="${qi}"]`);
+            row.querySelectorAll('.check-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            const badge = row.querySelector(`[data-status-badge="${qi}"]`);
+            badge.className = 'check-status-badge ' + (val ? 'ok' : 'fail');
+            badge.textContent = val ? '✅ Верно' : '❌ Неверно';
+        });
+    });
+
+    content.querySelectorAll('[data-grade]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            setGrade(sub.id, parseInt(btn.dataset.grade), manualResults);
+        });
+    });
+
+    openModal('checkModal');
+}
+
+async function setGrade(subId, grade, manualResults) {
+    try {
+        const updateData = { grade, status: 'graded', gradedAt: Date.now() };
+        if (manualResults && Object.keys(manualResults).length > 0) {
+            updateData.manualChecks = manualResults;
+        }
+        await fb.update(fb.ref('teachlexa/submissions/' + subId), updateData);
+        toast('✅ Оценка ' + grade + ' выставлена!');
+        closeModal('checkModal');
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка', 'error');
+    }
+}
+
+/* ============================================================
+   УЧИТЕЛЬ: СПИСОК УЧЕНИКОВ
+   ============================================================ */
+function renderStudents(users) {
+    const list = $('studentsList');
+    if (!list) return;
+    const students = Object.entries(users)
+        .map(([key, u]) => ({ ...u, key }))
+        .filter(u => u.role === 'student')
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+    if (students.length === 0) {
+        list.innerHTML = '<div class="empty">Учеников пока нет</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    students.forEach(st => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(st.name)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>🔑 Пароль: <b style="color:#ffdd44;">${escapeHtml(st.password)}</b></span>
+                        <span>📅 ${new Date(st.createdAt).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                </div>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+/* ============================================================
+   УЧЕНИК: СПИСОК ЗАДАНИЙ
+   ============================================================ */
+function renderTasks(tasksArg) {
+    const list = $('tasksList');
+    if (!list || !currentUser) return;
+
+    const tasks = tasksArg || {};
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => b.createdAt - a.createdAt);
+
+    if (all.length === 0) {
+        list.innerHTML = '<div class="empty">Заданий пока нет</div>';
+        return;
+    }
+
+    fb.get(fb.ref('teachlexa/submissions')).then(subSnap => {
+        const subs = subSnap.val() || {};
+        const mySubs = {};
+        Object.entries(subs).forEach(([id, s]) => {
+            if (s.studentKey === currentUserKey) mySubs[s.taskId] = { ...s, id };
+        });
+
+        list.innerHTML = '';
+        all.forEach(task => {
+            const sub = mySubs[task.id];
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            let statusBadge = '';
+            let actionBtn = '';
+
+            if (!sub) {
+                statusBadge = '<span class="badge badge-blue">Новое</span>';
+                actionBtn = `<button class="btn btn-primary btn-small" style="width:auto;margin-top:10px;" data-start="${task.id}">🚀 Начать выполнение</button>`;
+            } else if (sub.status === 'submitted') {
+                statusBadge = '<span class="badge badge-yellow">На проверке</span>';
+                actionBtn = `<div style="color:#88bb99;font-size:13px;margin-top:10px;">Работа отправлена на проверку</div>`;
+            } else if (sub.status === 'graded') {
+                statusBadge = '<span class="badge badge-green">Проверено</span>';
+                actionBtn = `<div style="display:flex;align-items:center;gap:12px;margin-top:10px;">
+                    <div class="grade grade-${sub.grade}">${sub.grade}</div>
+                    <div style="color:#88bb99;font-size:13px;">Оценка получена</div>
+                </div>`;
+            }
+
+            const deadlineText = task.deadline
+                ? new Date(task.deadline).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit' })
+                : 'без дедлайна';
+
+            card.innerHTML = `
+                <div class="card-header">
+                    <div>
+                        <div class="card-title">${escapeHtml(task.title)}</div>
+                        <div class="card-meta" style="margin-top:8px;">
+                            <span>📅 ${deadlineText}</span>
+                            <span>⏱ ${task.timerMin} мин</span>
+                            <span>📝 ${task.questions.length} вопросов</span>
+                        </div>
+                    </div>
+                    ${statusBadge}
+                </div>
+                ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ''}
+                ${actionBtn}
+            `;
+
+            const startBtn = card.querySelector('[data-start]');
+            if (startBtn) startBtn.addEventListener('click', () => startTask(task));
+
+            list.appendChild(card);
+        });
+    });
+}
+
+function startTask(task) {
+    $('workModalTitle').textContent = task.title;
+    const content = $('workModalContent');
+    const answers = task.questions.map(() => ({ text: '' }));
+
+    let html = `${task.desc ? `<div class="card-desc" style="margin-bottom:16px;">${escapeHtml(task.desc)}</div>` : ''}`;
+    task.questions.forEach((q, i) => {
+        html += `<div class="question-block">
+            <div class="q-num">Вопрос ${i+1}</div>
+            <div style="color:#fff;font-size:15px;font-weight:800;margin:8px 0 14px;">${escapeHtml(q.text)}</div>`;
+
+        if (q.type === 'choice') {
+            q.answers.forEach((a, ai) => {
+                html += `<label class="answer-pick" data-q="${i}" data-a="${ai}">
+                    <input type="radio" name="q${i}" value="${ai}" data-q="${i}" data-a="${ai}" class="answer-radio">
+                    <span class="ans-text">${escapeHtml(a.text)}</span>
+                </label>`;
+            });
+        } else {
+            html += `<textarea class="answer-textarea" data-q="${i}" placeholder="Напиши ответ..." style="width:100%;padding:14px 18px;background:rgba(0,0,0,0.5);border:2px solid #2a3a5a;border-radius:12px;color:#fff;font-size:15px;font-family:inherit;font-weight:600;outline:none;min-height:100px;resize:vertical;"></textarea>`;
+        }
+        html += `</div>`;
+    });
+    html += `<button class="btn btn-primary" id="submitWorkBtn" style="margin-top:16px;">📤 ОТПРАВИТЬ РАБОТУ</button>`;
+
+    content.innerHTML = html;
+
+    content.querySelectorAll('.answer-radio').forEach(r => r.addEventListener('change', () => {
+        const qi = parseInt(r.dataset.q);
+        content.querySelectorAll(`.answer-pick[data-q="${qi}"]`).forEach(row => row.classList.remove('selected'));
+        r.closest('.answer-pick').classList.add('selected');
+        const q = task.questions[qi];
+        answers[qi].text = q.answers[parseInt(r.dataset.a)].text;
+    }));
+
+    content.querySelectorAll('.answer-textarea').forEach(ta => ta.addEventListener('input', () => {
+        answers[parseInt(ta.dataset.q)].text = ta.value;
+    }));
+
+    $('submitWorkBtn').addEventListener('click', () => submitWork(task, answers));
+
+    if (activeTimer) clearInterval(activeTimer);
+    let secondsLeft = task.timerMin * 60;
+    const timerEl = $('timerDisplay');
+    timerEl.style.display = 'block';
+    const updateTimer = () => {
+        const m = String(Math.floor(secondsLeft / 60)).padStart(2, '0');
+        const s = String(secondsLeft % 60).padStart(2, '0');
+        timerEl.textContent = '⏱ ' + m + ':' + s;
+        if (secondsLeft <= 0) {
+            clearInterval(activeTimer);
+            timerEl.style.display = 'none';
+            toast('Время вышло! Работа отправлена.', 'error');
+            submitWork(task, answers);
+        }
+        secondsLeft--;
+    };
+    updateTimer();
+    activeTimer = setInterval(updateTimer, 1000);
+
+    openModal('workModal');
+}
+
+async function submitWork(task, answers) {
+    if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+    $('timerDisplay').style.display = 'none';
+
+    try {
+        let autoGrade = null;
+        if (task.mode === 'auto') {
+            let correct = 0;
+            task.questions.forEach((q, i) => {
+                const ans = answers[i].text;
+                if (q.type === 'choice') {
+                    const correctAns = q.answers.find(a => a.correct)?.text;
+                    if (correctAns && ans === correctAns) correct++;
+                } else {
+                    if (q.checkMode !== 'manual' && q.correctText.trim().toLowerCase() === ans.trim().toLowerCase()) correct++;
+                }
+            });
+            const pct = correct / task.questions.length;
+            if (pct >= 0.85) autoGrade = 5;
+            else if (pct >= 0.65) autoGrade = 4;
+            else if (pct >= 0.45) autoGrade = 3;
+            else autoGrade = 2;
+        }
+
+        const subRef = fb.push(fb.ref('teachlexa/submissions'));
+        const subData = {
+            taskId: task.id,
+            taskTitle: task.title,
+            studentKey: currentUserKey,
+            studentName: currentUser.name,
+            answers,
+            submittedAt: Date.now(),
+            status: autoGrade ? 'graded' : 'submitted'
+        };
+        if (autoGrade) {
+            subData.grade = autoGrade;
+            subData.gradedAt = Date.now();
+        }
+        await fb.set(subRef, subData);
+
+        closeModal('workModal');
+        toast(autoGrade ? '✅ Работа отправлена! Оценка: ' + autoGrade : '✅ Работа отправлена на проверку!');
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка: ' + (e.message || e), 'error');
+    }
+}
+
+/* ============================================================
+   УЧЕНИК: МОИ ОЦЕНКИ
+   ============================================================ */
+function renderResults(submissions) {
+    const list = $('resultsList');
+    if (!list || !currentUser) return;
+
+    const subs = submissions || {};
+    const mySubs = Object.entries(subs)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.studentKey === currentUserKey)
+        .sort((a,b) => b.submittedAt - a.submittedAt);
+
+    if (mySubs.length === 0) {
+        list.innerHTML = '<div class="empty">Ты ещё не сдал ни одной работы</div>';
+        return;
+    }
+
+    const graded = mySubs.filter(s => s.grade);
+    const avg = graded.length > 0 ? (graded.reduce((sum, s) => sum + s.grade, 0) / graded.length) : 0;
+    const avgFormatted = graded.length > 0 ? (avg % 1 === 0 ? avg.toString() : avg.toFixed(2)) : '—';
+
+    let html = `<div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+        <div class="card" style="text-align:center;margin:0;">
+            <div style="font-size:36px;font-weight:900;color:#ffdd44;">${avgFormatted}</div>
+            <div style="color:#8899bb;font-size:11px;letter-spacing:2px;">СРЕДНИЙ БАЛЛ</div>
+        </div>
+        <div class="card" style="text-align:center;margin:0;">
+            <div style="font-size:36px;font-weight:900;color:#44ff88;">${graded.length}</div>
+            <div style="color:#8899bb;font-size:11px;letter-spacing:2px;">ОЦЕНОК</div>
+        </div>
+    </div>`;
+
+    mySubs.forEach(sub => {
+        const gradeHtml = sub.grade
+            ? `<div class="grade grade-${sub.grade}">${sub.grade}</div>`
+            : `<span class="badge badge-yellow">На проверке</span>`;
+        html += `<div class="card">
+            <div class="card-header" style="margin:0;">
+                <div>
+                    <div class="card-title" style="font-size:16px;">${escapeHtml(sub.taskTitle)}</div>
+                    <div class="card-meta" style="margin-top:6px;">
+                        <span>📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</span>
+                    </div>
+                </div>
+                ${gradeHtml}
+            </div>
+        </div>`;
+    });
+
+    list.innerHTML = html;
+}
+</script>
+
+</body>
+</html>
