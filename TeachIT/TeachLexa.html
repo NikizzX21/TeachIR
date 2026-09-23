@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>👨‍🏫 TeachIT — Учитель</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<script>
+(function() {
+    var p1 = "AIzaSyCdrJOLym";
+    var p2 = "Xxs7XtsZb-ijwROiJ2xgeFTzE";
+    var d1 = "https://hot-lexa";
+    var d2 = "-default-rtdb.firebaseio.com";
+    var p = "hot" + "-" + "lexa";
+    window.FIREBASE_CONFIG = {
+        apiKey: p1 + p2,
+        authDomain: p + ".firebaseapp.com",
+        databaseURL: d1 + d2,
+        projectId: p,
+        storageBucket: p + ".firebasestorage.app",
+        messagingSenderId: "909722788172",
+        appId: "1:909722788172:web:6c0b1eb6524c321f2b6fe9"
+    };
+})();
+</script>
+
+<script type="module">
+import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+import { getDatabase, ref, set, get, push, onValue, update, remove } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js';
+const app = initializeApp(window.FIREBASE_CONFIG);
+const db = getDatabase(app);
+window.fb = { db, ref: (p) => ref(db, p), set, get, push, onValue, update, remove };
+window.fbReady = true;
+</script>
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { background: #0a0e1a; font-family: 'Inter', sans-serif; color: #e8ecf5; min-height: 100vh; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    header {
+        background: linear-gradient(135deg, #2a1a5a, #1f0f3a);
+        border: 2px solid #a855f7; border-radius: 16px;
+        padding: 20px 28px; margin-bottom: 24px;
+        display: flex; align-items: center; justify-content: space-between;
+        flex-wrap: wrap; gap: 14px;
+    }
+    header h1 { font-size: 26px; letter-spacing: 4px; color: #fff; font-weight: 900; }
+    header h1 span { color: #a855f7; text-shadow: 0 0 20px #a855f7; }
+
+    .teacher-info {
+        display: flex; align-items: center; gap: 12px;
+        background: rgba(0,0,0,0.4); padding: 8px 16px;
+        border-radius: 12px; border: 2px solid #a855f7;
+    }
+    .teacher-info .avatar {
+        width: 40px; height: 40px; border-radius: 50%;
+        background: linear-gradient(135deg, #a855f7, #7c3aed);
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 900; color: #fff; font-size: 18px;
+    }
+    .teacher-info .name { color: #fff; font-weight: 800; font-size: 14px; }
+
+    .tabs {
+        display: flex; gap: 8px; margin-bottom: 24px;
+        background: rgba(0,0,0,0.4); border-radius: 14px;
+        padding: 6px; border: 2px solid #4a2a7a;
+    }
+    .tab {
+        flex: 1; padding: 16px; background: none; border: none;
+        color: #8899bb; font-size: 13px; font-weight: 800;
+        letter-spacing: 2px; cursor: pointer; font-family: inherit;
+        border-radius: 10px; transition: 0.25s; text-transform: uppercase;
+    }
+    .tab.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; box-shadow: 0 4px 20px rgba(168,85,247,0.5); }
+
+    .card {
+        background: linear-gradient(135deg, #1a2a5a, #0f1a3a);
+        border: 2px solid #4a6aaa; border-radius: 16px;
+        padding: 22px; margin-bottom: 16px; transition: 0.25s;
+    }
+    .card:hover { border-color: #a855f7; box-shadow: 0 0 30px rgba(168,85,247,0.15); }
+    .card-header { display: flex; justify-content: space-between; align-items: flex-start; gap: 14px; margin-bottom: 12px; }
+    .card-title { color: #fff; font-size: 18px; font-weight: 900; letter-spacing: 1px; }
+    .card-desc { color: #c8d4e8; font-size: 14px; line-height: 1.6; margin-bottom: 14px; }
+    .card-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: #8899bb; letter-spacing: 1px; }
+
+    .btn {
+        width: 100%; padding: 16px; border: none; border-radius: 12px;
+        font-size: 14px; font-weight: 900; letter-spacing: 2px;
+        cursor: pointer; font-family: inherit; transition: 0.25s;
+        text-transform: uppercase; margin-bottom: 10px;
+    }
+    .btn-primary { background: linear-gradient(135deg, #44ff88, #22aa44); color: #0a0a14; }
+    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(68,255,136,0.5); }
+    .btn-purple { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; }
+    .btn-purple:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(168,85,247,0.5); }
+    .btn-blue { background: linear-gradient(135deg, #4a9eff, #2a6acc); color: #fff; }
+    .btn-danger { background: linear-gradient(135deg, #ff4a7d, #cc2a5a); color: #fff; }
+    .btn-ghost { background: rgba(255,255,255,0.05); border: 2px solid #2a3a5a; color: #8899bb; }
+    .btn-ghost:hover { background: rgba(255,255,255,0.1); border-color: #a855f7; color: #fff; }
+    .btn-small { padding: 10px 18px; font-size: 12px; width: auto; }
+
+    .input-group { margin-bottom: 16px; }
+    .input-group label {
+        display: block; color: #8899bb; font-size: 11px;
+        letter-spacing: 2px; margin-bottom: 8px; font-weight: 800; text-transform: uppercase;
+    }
+    .input-group input, .input-group textarea, .input-group select {
+        width: 100%; padding: 14px 18px; background: rgba(0,0,0,0.5);
+        border: 2px solid #2a3a5a; border-radius: 12px; color: #fff;
+        font-size: 15px; font-family: inherit; font-weight: 600; outline: none; transition: 0.25s;
+    }
+    .input-group textarea { min-height: 100px; resize: vertical; }
+    .input-group input:focus, .input-group textarea:focus, .input-group select:focus {
+        border-color: #a855f7; box-shadow: 0 0 0 4px rgba(168,85,247,0.15);
+    }
+
+    .badge { display: inline-block; padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; }
+    .badge-green { background: rgba(68,255,136,0.15); color: #44ff88; border: 1px solid #44ff88; }
+    .badge-yellow { background: rgba(255,221,68,0.15); color: #ffdd44; border: 1px solid #ffdd44; }
+    .badge-red { background: rgba(255,74,125,0.15); color: #ff4a7d; border: 1px solid #ff4a7d; }
+    .badge-blue { background: rgba(74,158,255,0.15); color: #4a9eff; border: 1px solid #4a9eff; }
+    .badge-purple { background: rgba(168,85,247,0.15); color: #a855f7; border: 1px solid #a855f7; }
+
+    .grade {
+        display: inline-flex; align-items: center; justify-content: center;
+        width: 56px; height: 56px; border-radius: 14px;
+        font-size: 26px; font-weight: 900; flex-shrink: 0;
+    }
+    .grade-5 { background: linear-gradient(135deg, #44ff88, #22ff66); color: #0a0a14; }
+    .grade-4 { background: linear-gradient(135deg, #88dd44, #44aa22); color: #0a0a14; }
+    .grade-3 { background: linear-gradient(135deg, #ffdd44, #ffaa22); color: #0a0a14; }
+    .grade-2 { background: linear-gradient(135deg, #ff4a7d, #cc2a5a); color: #fff; }
+
+    .question-block {
+        background: rgba(0,0,0,0.4); border: 2px solid #2a3a5a;
+        border-radius: 14px; padding: 18px; margin-bottom: 14px; position: relative;
+    }
+    .question-block .q-num {
+        position: absolute; top: -12px; left: 16px;
+        background: #a855f7; color: #fff;
+        padding: 4px 12px; border-radius: 20px;
+        font-size: 12px; font-weight: 900;
+    }
+    .question-block .delete-q {
+        position: absolute; top: 10px; right: 10px;
+        width: 30px; height: 30px; border-radius: 8px;
+        background: rgba(255,74,125,0.15); border: 1px solid #ff4a7d;
+        color: #ff4a7d; cursor: pointer; font-size: 14px;
+    }
+    .question-block .delete-q:hover { background: #ff4a7d; color: #fff; }
+
+    .answer-row {
+        display: flex; align-items: center; gap: 10px;
+        padding: 10px 14px; background: rgba(0,0,0,0.3);
+        border: 1px solid #2a3a5a; border-radius: 10px; margin-bottom: 8px;
+    }
+    .answer-row.correct { border-color: #44ff88; background: rgba(68,255,136,0.08); }
+    .answer-row input[type="radio"] { width: 20px; height: 20px; accent-color: #44ff88; }
+    .answer-row input[type="text"] {
+        flex: 1; background: none; border: none; color: #fff;
+        font-size: 14px; font-family: inherit; font-weight: 600; outline: none;
+    }
+    .answer-row .remove-a {
+        width: 28px; height: 28px; border-radius: 6px;
+        background: rgba(255,74,125,0.15); border: 1px solid #ff4a7d;
+        color: #ff4a7d; cursor: pointer; font-size: 12px;
+    }
+
+    .type-selector { display: flex; gap: 8px; margin-bottom: 14px; flex-wrap: wrap; }
+    .type-btn {
+        padding: 10px 18px; background: rgba(0,0,0,0.4);
+        border: 2px solid #2a3a5a; border-radius: 10px;
+        color: #8899bb; font-size: 12px; font-weight: 800;
+        letter-spacing: 1px; cursor: pointer; font-family: inherit;
+        transition: 0.2s; text-transform: uppercase;
+    }
+    .type-btn.active { background: linear-gradient(135deg, #a855f7, #7c3aed); color: #fff; border-color: #a855f7; }
+
+    .file-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .file-preview img, .file-preview video {
+        max-width: 150px; max-height: 100px;
+        border-radius: 8px; border: 2px solid #2a3a5a;
+        object-fit: cover; cursor: pointer;
+    }
+
+    .modal {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+        backdrop-filter: blur(8px); z-index: 500; display: none;
+        align-items: flex-start; justify-content: center;
+        padding: 20px; overflow-y: auto;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+        background: linear-gradient(135deg, #1a2a5a, #0f1a3a);
+        border: 2px solid #a855f7; border-radius: 20px;
+        padding: 28px; max-width: 800px; width: 100%;
+        margin: 40px auto;
+    }
+    .modal-title {
+        color: #fff; font-size: 22px; font-weight: 900;
+        letter-spacing: 2px; margin-bottom: 20px;
+        display: flex; justify-content: space-between; align-items: center;
+    }
+    .modal-close-btn {
+        width: 36px; height: 36px; border-radius: 10px;
+        background: rgba(255,74,125,0.15); border: 2px solid #ff4a7d;
+        color: #ff4a7d; font-size: 18px; cursor: pointer; font-family: inherit;
+    }
+    .modal-close-btn:hover { background: #ff4a7d; color: #fff; }
+
+    #toast {
+        position: fixed; bottom: 30px; left: 50%;
+        transform: translateX(-50%) translateY(150px);
+        padding: 16px 28px; background: rgba(15,15,26,0.98);
+        border: 2px solid #a855f7; border-radius: 14px;
+        color: #a855f7; font-size: 14px; font-weight: 800;
+        z-index: 9999; transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1);
+        pointer-events: none; max-width: 90vw;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.error { border-color: #ff4a7d; color: #ff4a7d; }
+
+    .empty { text-align: center; padding: 60px 20px; color: #556677; font-size: 15px; font-weight: 600; }
+    .empty::before { content: '📭'; display: block; font-size: 64px; margin-bottom: 16px; opacity: 0.5; }
+
+    @media (max-width: 600px) {
+        header { padding: 14px 18px; }
+        header h1 { font-size: 18px; }
+        .tabs { flex-direction: column; }
+        .modal-box { padding: 20px 16px; }
+    }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<div class="container">
+    <header>
+        <h1>👨‍🏫 <span>Teach</span>IT — Учитель</h1>
+        <div class="teacher-info">
+            <div class="avatar">У</div>
+            <div class="name">Учитель</div>
+        </div>
+    </header>
+
+    <div class="tabs">
+        <button class="tab active" data-tab="create">➕ Создать</button>
+        <button class="tab" data-tab="list">📋 Задания</button>
+        <button class="tab" data-tab="check">✅ Проверка</button>
+        <button class="tab" data-tab="students">👥 Ученики</button>
+    </div>
+
+    <!-- СОЗДАНИЕ -->
+    <div id="tabCreate">
+        <div class="card">
+            <div class="input-group">
+                <label>Название задания</label>
+                <input type="text" id="taskTitle" placeholder="Например: Контрольная работа">
+            </div>
+            <div class="input-group">
+                <label>Описание</label>
+                <textarea id="taskDesc" placeholder="Что нужно сделать..."></textarea>
+            </div>
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:14px;">
+                <div class="input-group">
+                    <label>Дедлайн</label>
+                    <input type="datetime-local" id="taskDeadline">
+                </div>
+                <div class="input-group">
+                    <label>Таймер (минут)</label>
+                    <input type="number" id="taskTimer" min="1" max="1440" value="30">
+                </div>
+            </div>
+            <div class="input-group">
+                <label>Режим проверки</label>
+                <select id="taskMode">
+                    <option value="manual">✍️ Ручная работа (учитель ставит оценку)</option>
+                    <option value="auto">🤖 Авторабота (без проверки учителем)</option>
+                </select>
+            </div>
+            <div class="input-group">
+                <label>Прикрепить файлы</label>
+                <input type="file" id="taskFiles" multiple accept="image/*,video/*,*/*">
+                <div class="file-preview" id="taskFilesPreview"></div>
+            </div>
+
+            <hr style="border:none;border-top:1px solid #2a3a5a;margin:20px 0;">
+
+            <h3 style="color:#a855f7;font-size:16px;letter-spacing:2px;margin-bottom:14px;">ВОПРОСЫ</h3>
+            <div id="questionsList"></div>
+            <button class="btn btn-blue" id="addQuestionBtn">➕ Добавить вопрос</button>
+        </div>
+        <button class="btn btn-purple" id="saveTaskBtn">💾 СОХРАНИТЬ ЗАДАНИЕ</button>
+    </div>
+
+    <!-- СПИСОК -->
+    <div id="tabList" style="display:none;">
+        <div id="teacherTasksList"></div>
+    </div>
+
+    <!-- ПРОВЕРКА -->
+    <div id="tabCheck" style="display:none;">
+        <div id="checkList"></div>
+    </div>
+
+    <!-- УЧЕНИКИ -->
+    <div id="tabStudents" style="display:none;">
+        <div id="studentsList"></div>
+    </div>
+</div>
+
+<!-- МОДАЛКА ПРОВЕРКИ -->
+<div class="modal" id="checkModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>Проверка работы</span>
+            <button class="modal-close-btn" onclick="closeModal('checkModal')">✕</button>
+        </div>
+        <div id="checkModalContent"></div>
+    </div>
+</div>
+
+<!-- МОДАЛКА ПРОФИЛЯ УЧЕНИКА -->
+<div class="modal" id="studentProfileModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>Профиль ученика</span>
+            <button class="modal-close-btn" onclick="closeModal('studentProfileModal')">✕</button>
+        </div>
+        <div id="studentProfileContent"></div>
+    </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function toast(text, type = 'ok') {
+    const el = $('toast');
+    el.textContent = text;
+    el.className = 'show' + (type === 'error' ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function openModal(id) { $(id).classList.add('active'); }
+function closeModal(id) { $(id).classList.remove('active'); }
+window.closeModal = closeModal;
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+// Вкладки
+document.querySelectorAll('[data-tab]').forEach(tab => {
+    tab.addEventListener('click', () => {
+        document.querySelectorAll('[data-tab]').forEach(t => t.classList.remove('active'));
+        tab.classList.add('active');
+        const t = tab.dataset.tab;
+        $('tabCreate').style.display = t === 'create' ? 'block' : 'none';
+        $('tabList').style.display = t === 'list' ? 'block' : 'none';
+        $('tabCheck').style.display = t === 'check' ? 'block' : 'none';
+        $('tabStudents').style.display = t === 'students' ? 'block' : 'none';
+    });
+});
+
+// Конструктор вопросов
+let questions = [];
+let taskFiles = [];
+
+$('taskFiles').addEventListener('change', (e) => {
+    const files = Array.from(e.target.files);
+    files.forEach(file => {
+        if (file.size > 1024 * 1024) return toast('Файл ' + file.name + ' больше 1 МБ', 'error');
+        const reader = new FileReader();
+        reader.onload = (ev) => {
+            taskFiles.push({ name: file.name, type: file.type, data: ev.target.result });
+            renderFilesPreview();
+        };
+        reader.readAsDataURL(file);
+    });
+    e.target.value = '';
+});
+
+function renderFilesPreview() {
+    const preview = $('taskFilesPreview');
+    preview.innerHTML = '';
+    taskFiles.forEach((f, i) => {
+        if (f.type.startsWith('image/')) {
+            const img = document.createElement('img');
+            img.src = f.data;
+            img.onclick = () => { taskFiles.splice(i, 1); renderFilesPreview(); };
+            preview.appendChild(img);
+        } else if (f.type.startsWith('video/')) {
+            const vid = document.createElement('video');
+            vid.src = f.data;
+            vid.onclick = () => { taskFiles.splice(i, 1); renderFilesPreview(); };
+            preview.appendChild(vid);
+        } else {
+            const div = document.createElement('div');
+            div.style.cssText = 'padding:8px 12px;background:rgba(0,0,0,0.4);border-radius:8px;font-size:12px;cursor:pointer;';
+            div.textContent = '📎 ' + f.name;
+            div.onclick = () => { taskFiles.splice(i, 1); renderFilesPreview(); };
+            preview.appendChild(div);
+        }
+    });
+}
+
+$('addQuestionBtn').addEventListener('click', () => {
+    questions.push({
+        type: 'choice', text: '',
+        answers: [{ text: '', correct: false }, { text: '', correct: false }],
+        correctText: ''
+    });
+    renderQuestions();
+});
+
+function renderQuestions() {
+    const list = $('questionsList');
+    list.innerHTML = '';
+
+    questions.forEach((q, qi) => {
+        const block = document.createElement('div');
+        block.className = 'question-block';
+
+        let answersHtml = '';
+        if (q.type === 'choice') {
+            answersHtml = q.answers.map((a, ai) => `
+                <div class="answer-row ${a.correct ? 'correct' : ''}">
+                    <input type="radio" name="q${qi}_correct" ${a.correct ? 'checked' : ''} data-q="${qi}" data-a="${ai}" class="correct-radio">
+                    <input type="text" value="${escapeHtml(a.text)}" placeholder="Вариант ${ai+1}" data-q="${qi}" data-a="${ai}" class="answer-text">
+                    <button class="remove-a" data-q="${qi}" data-a="${ai}">✕</button>
+                </div>
+            `).join('');
+            answersHtml += `<button class="btn btn-ghost btn-small" style="margin-top:6px;" data-add-answer="${qi}">➕ Добавить вариант</button>`;
+        } else {
+            answersHtml = `<div class="input-group" style="margin:0;">
+                <label>Правильный ответ</label>
+                <input type="text" value="${escapeHtml(q.correctText)}" placeholder="Правильный ответ" data-q="${qi}" class="correct-text-input">
+            </div>`;
+        }
+
+        block.innerHTML = `
+            <div class="q-num">Вопрос ${qi + 1}</div>
+            <button class="delete-q" data-delete-q="${qi}">✕</button>
+            <div class="type-selector">
+                <button class="type-btn ${q.type === 'choice' ? 'active' : ''}" data-type="choice" data-q="${qi}">📋 Выбор ответа</button>
+                <button class="type-btn ${q.type === 'text' ? 'active' : ''}" data-type="text" data-q="${qi}">✏️ Написать ответ</button>
+            </div>
+            <div class="input-group" style="margin-top:10px;">
+                <label>Текст вопроса</label>
+                <input type="text" value="${escapeHtml(q.text)}" placeholder="Что нужно ответить?" data-q="${qi}" class="question-text">
+            </div>
+            ${answersHtml}
+        `;
+        list.appendChild(block);
+    });
+
+    list.querySelectorAll('.delete-q').forEach(b => b.addEventListener('click', () => {
+        questions.splice(parseInt(b.dataset.deleteQ), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('.question-text').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].text = inp.value;
+    }));
+    list.querySelectorAll('.answer-text').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].answers[parseInt(inp.dataset.a)].text = inp.value;
+    }));
+    list.querySelectorAll('.correct-radio').forEach(r => r.addEventListener('change', () => {
+        const qi = parseInt(r.dataset.q);
+        questions[qi].answers.forEach(a => a.correct = false);
+        questions[qi].answers[parseInt(r.dataset.a)].correct = true;
+        renderQuestions();
+    }));
+    list.querySelectorAll('.remove-a').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].answers.splice(parseInt(b.dataset.a), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-add-answer]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.addAnswer)].answers.push({ text: '', correct: false });
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-type]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].type = b.dataset.type;
+        renderQuestions();
+    }));
+    list.querySelectorAll('.correct-text-input').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].correctText = inp.value;
+    }));
+}
+
+// Сохранение задания
+$('saveTaskBtn').addEventListener('click', async () => {
+    const title = $('taskTitle').value.trim();
+    const desc = $('taskDesc').value.trim();
+    const deadline = $('taskDeadline').value;
+    const timerMin = parseInt($('taskTimer').value) || 30;
+    const mode = $('taskMode').value;
+
+    if (!title) return toast('Введи название', 'error');
+    if (questions.length === 0) return toast('Добавь хотя бы 1 вопрос', 'error');
+
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (!q.text.trim()) return toast('Заполни текст вопроса ' + (i+1), 'error');
+        if (q.type === 'choice') {
+            if (q.answers.length < 2) return toast('Вопрос ' + (i+1) + ' — минимум 2 варианта', 'error');
+            if (!q.answers.some(a => a.correct)) return toast('Вопрос ' + (i+1) + ' — выбери правильный', 'error');
+            if (q.answers.some(a => !a.text.trim())) return toast('Вопрос ' + (i+1) + ' — заполни варианты', 'error');
+        } else {
+            if (!q.correctText.trim()) return toast('Вопрос ' + (i+1) + ' — введи ответ', 'error');
+        }
+    }
+
+    try {
+        const taskRef = fb.push(fb.ref('teachlexa/tasks'));
+        await fb.set(taskRef, {
+            title, desc,
+            deadline: deadline || null,
+            timerMin, mode,
+            files: taskFiles,
+            questions,
+            authorName: 'Учитель',
+            createdAt: Date.now()
+        });
+        toast('✅ Задание создано!');
+        $('taskTitle').value = '';
+        $('taskDesc').value = '';
+        $('taskDeadline').value = '';
+        $('taskTimer').value = 30;
+        taskFiles = [];
+        renderFilesPreview();
+        questions = [];
+        renderQuestions();
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка: ' + (e.message || e), 'error');
+    }
+});
+
+// Подписки
+fb.onValue(fb.ref('teachlexa/tasks'), (snap) => {
+    renderTeacherTasks(snap.val() || {});
+});
+fb.onValue(fb.ref('teachlexa/submissions'), (snap) => {
+    renderCheckList(snap.val() || {});
+});
+fb.onValue(fb.ref('teachlexa/users'), (snap) => {
+    renderStudents(snap.val() || {});
+});
+
+// Список заданий
+function renderTeacherTasks(tasks) {
+    const list = $('teacherTasksList');
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => b.createdAt - a.createdAt);
+
+    if (all.length === 0) {
+        list.innerHTML = '<div class="empty">Заданий пока нет</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    all.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        const deadlineText = task.deadline
+            ? new Date(task.deadline).toLocaleString('ru-RU', { day: 'numeric', month: 'short', hour: '2-digit' })
+            : 'без дедлайна';
+        const modeText = task.mode === 'auto' ? '🤖 Авторабота' : '✍️ Ручная работа';
+
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(task.title)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>📅 ${deadlineText}</span>
+                        <span>⏱ ${task.timerMin} мин</span>
+                        <span>📝 ${task.questions.length} вопросов</span>
+                        <span class="badge badge-purple">${modeText}</span>
+                    </div>
+                </div>
+            </div>
+            ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ''}
+            <button class="btn btn-danger btn-small" style="width:auto;margin-top:10px;" data-del="${task.id}">🗑 Удалить</button>
+        `;
+        card.querySelector('[data-del]').addEventListener('click', async () => {
+            if (!confirm('Удалить задание?')) return;
+            await fb.remove(fb.ref('teachlexa/tasks/' + task.id));
+            toast('Удалено');
+        });
+        list.appendChild(card);
+    });
+}
+
+// Список работ на проверку
+function renderCheckList(submissions) {
+    const list = $('checkList');
+    const pending = Object.entries(submissions)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.status === 'submitted')
+        .sort((a,b) => b.submittedAt - a.submittedAt);
+
+    if (pending.length === 0) {
+        list.innerHTML = '<div class="empty">Нет работ на проверку</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    pending.forEach(sub => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(sub.taskTitle)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>👤 ${escapeHtml(sub.studentName)}</span>
+                        <span>📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</span>
+                    </div>
+                </div>
+                <span class="badge badge-yellow">На проверке</span>
+            </div>
+            <button class="btn btn-primary btn-small" style="width:auto;margin-top:10px;" data-check="${sub.id}">✅ Проверить</button>
+        `;
+        card.querySelector('[data-check]').addEventListener('click', async () => {
+            const taskSnap = await fb.get(fb.ref('teachlexa/tasks/' + sub.taskId));
+            const task = taskSnap.val();
+            if (!task) return toast('Задание удалено', 'error');
+            openCheckModal(sub, task);
+        });
+        list.appendChild(card);
+    });
+}
+
+// Проверка работы
+function openCheckModal(sub, task) {
+    const content = $('checkModalContent');
+    let html = `<div style="margin-bottom:14px;">
+        <div style="color:#fff;font-size:16px;font-weight:800;">${escapeHtml(task.title)}</div>
+        <div style="color:#8899bb;font-size:13px;">Ученик: <b style="color:#44ff88;">${escapeHtml(sub.studentName)}</b></div>
+    </div>`;
+
+    task.questions.forEach((q, i) => {
+        const ans = sub.answers[i];
+        html += `<div class="question-block" style="margin-top:16px;">
+            <div style="color:#88ddff;font-size:13px;font-weight:800;margin-bottom:8px;">Вопрос ${i+1}: ${escapeHtml(q.text)}</div>`;
+
+        if (q.type === 'choice') {
+            const correctText = q.answers.find(a => a.correct)?.text || '';
+            html += `<div style="font-size:13px;color:#8899bb;">Ответ ученика: <b style="color:#fff;">${escapeHtml(ans?.text || '(нет)')}</b></div>
+                <div style="font-size:13px;color:#8899bb;">Правильный: <b style="color:#44ff88;">${escapeHtml(correctText)}</b></div>`;
+        } else {
+            html += `<div style="font-size:13px;color:#8899bb;">Ответ ученика:</div>
+                <div style="background:rgba(0,0,0,0.4);padding:12px;border-radius:10px;margin-top:6px;color:#fff;font-size:14px;">${escapeHtml(ans?.text || '(нет ответа)')}</div>
+                <div style="font-size:13px;color:#8899bb;margin-top:8px;">Правильный: <b style="color:#44ff88;">${escapeHtml(q.correctText)}</b></div>`;
+        }
+        html += `</div>`;
+    });
+
+    html += `<div style="margin-top:24px;">
+        <label style="color:#8899bb;font-size:11px;letter-spacing:2px;font-weight:800;">ОЦЕНКА</label>
+        <div style="display:flex;gap:10px;margin-top:10px;">
+            <button class="btn grade-5" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="5">5</button>
+            <button class="btn grade-4" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="4">4</button>
+            <button class="btn grade-3" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="3">3</button>
+            <button class="btn grade-2" style="width:60px;height:60px;font-size:24px;border-radius:14px;padding:0;" data-grade="2">2</button>
+        </div>
+    </div>`;
+
+    content.innerHTML = html;
+    content.querySelectorAll('[data-grade]').forEach(btn => {
+        btn.addEventListener('click', () => setGrade(sub.id, parseInt(btn.dataset.grade)));
+    });
+    openModal('checkModal');
+}
+
+async function setGrade(subId, grade) {
+    try {
+        await fb.update(fb.ref('teachlexa/submissions/' + subId), {
+            grade, status: 'graded', gradedAt: Date.now()
+        });
+        toast('✅ Оценка ' + grade + ' выставлена!');
+        closeModal('checkModal');
+    } catch (e) {
+        console.error(e);
+        toast('Ошибка', 'error');
+    }
+}
+
+// Список учеников
+function renderStudents(users) {
+    const list = $('studentsList');
+    const students = Object.entries(users)
+        .map(([key, u]) => ({ ...u, key }))
+        .filter(u => u.role === 'student')
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+    if (students.length === 0) {
+        list.innerHTML = '<div class="empty">Учеников пока нет</div>';
+        return;
+    }
+
+    list.innerHTML = '';
+    students.forEach(st => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-header">
+                <div>
+                    <div class="card-title">${escapeHtml(st.name)}</div>
+                    <div class="card-meta" style="margin-top:8px;">
+                        <span>🔑 Пароль: <b style="color:#ffdd44;">${escapeHtml(st.password)}</b></span>
+                        <span>📅 ${new Date(st.createdAt).toLocaleDateString('ru-RU')}</span>
+                    </div>
+                </div>
+                <button class="btn btn-purple btn-small" style="width:auto;" data-profile="${st.key}">👁 Профиль</button>
+            </div>
+        `;
+        card.querySelector('[data-profile]').addEventListener('click', () => openStudentProfile(st));
+        list.appendChild(card);
+    });
+}
+
+// Профиль ученика
+async function openStudentProfile(student) {
+    const subSnap = await fb.get(fb.ref('teachlexa/submissions'));
+    const allSubs = subSnap.val() || {};
+    const mySubs = Object.entries(allSubs)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.studentKey === student.key)
+        .sort((a,b) => b.submittedAt - a.submittedAt);
+
+    const graded = mySubs.filter(s => s.grade);
+    const total = graded.reduce((sum, s) => sum + s.grade, 0);
+    const avg = graded.length > 0 ? (total / graded.length) : 0;
+    const avgFormatted = graded.length > 0 ? (avg % 1 === 0 ? avg.toString() : avg.toFixed(2)) : '—';
+
+    let html = `<div class="card" style="margin-bottom:20px;">
+        <div class="card-title" style="font-size:22px;">${escapeHtml(student.name)}</div>
+        <div class="card-meta" style="margin-top:12px;flex-direction:column;gap:6px;">
+            <span>🔑 Пароль: <b style="color:#ffdd44;">${escapeHtml(student.password)}</b></span>
+            <span>📅 Регистрация: ${new Date(student.createdAt).toLocaleString('ru-RU')}</span>
+        </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;">
+        <div class="card" style="text-align:center;margin:0;">
+            <div style="font-size:36px;font-weight:900;color:#ffdd44;">${avgFormatted}</div>
+            <div style="color:#8899bb;font-size:11px;letter-spacing:2px;">СРЕДНИЙ БАЛЛ</div>
+        </div>
+        <div class="card" style="text-align:center;margin:0;">
+            <div style="font-size:36px;font-weight:900;color:#44ff88;">${graded.length}</div>
+            <div style="color:#8899bb;font-size:11px;letter-spacing:2px;">ОЦЕНОК</div>
+        </div>
+    </div>
+
+    <h3 style="color:#a855f7;font-size:14px;letter-spacing:2px;margin-bottom:12px;">ВСЕ РАБОТЫ</h3>`;
+
+    if (mySubs.length === 0) {
+        html += `<div class="empty">Ученик ещё не сдал работы</div>`;
+    } else {
+        mySubs.forEach(sub => {
+            const gradeHtml = sub.grade
+                ? `<div class="grade grade-${sub.grade}" style="width:40px;height:40px;font-size:18px;">${sub.grade}</div>`
+                : `<span class="badge badge-yellow">На проверке</span>`;
+            html += `<div class="card" style="margin-bottom:10px;">
+                <div class="card-header" style="margin:0;">
+                    <div>
+                        <div style="color:#fff;font-weight:800;">${escapeHtml(sub.taskTitle)}</div>
+                        <div style="color:#8899bb;font-size:11px;margin-top:4px;">📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</div>
+                    </div>
+                    ${gradeHtml}
+                </div>
+            </div>`;
+        });
+    }
+
+    $('studentProfileContent').innerHTML = html;
+    openModal('studentProfileModal');
+}
+</script>
+
+</body>
+</html>
