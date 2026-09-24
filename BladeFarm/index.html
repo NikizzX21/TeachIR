@@ -1,0 +1,1893 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QuestIT — задания и награды</title>
+
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-database-compat.js"></script>
+
+<script>
+var FIREBASE_CONFIG = (function() {
+    var p1 = "AIzaSyCdrJOLym";
+    var p2 = "Xxs7XtsZb-ijwROiJ2xgeFTzE";
+    var d1 = "https://hot-lexa";
+    var d2 = "-default-rtdb.firebaseio.com";
+    var p = "hot" + "-" + "lexa";
+    return {
+        apiKey: p1 + p2,
+        authDomain: p + ".firebaseapp.com",
+        databaseURL: d1 + d2,
+        projectId: p,
+        storageBucket: p + ".firebasestorage.app",
+        messagingSenderId: "909722788172",
+        appId: "1:909722788172:web:6c0b1eb6524c321f2b6fe9"
+    };
+})();
+firebase.initializeApp(FIREBASE_CONFIG);
+var db = firebase.database();
+window.fb = {
+    ref: function(p) { return db.ref(p); },
+    set: function(r, v) { return r.set(v); },
+    get: function(r) { return r.get(); },
+    push: function(r) { return r.push(); },
+    update: function(r, v) { return r.update(v); },
+    remove: function(r) { return r.remove(); },
+    onValue: function(r, cb) { return r.on('value', cb); }
+};
+</script>
+
+<style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        background: #f2f4f7;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+        color: #1a1a1a; font-size: 15px; line-height: 1.5;
+        -webkit-font-smoothing: antialiased;
+    }
+    .topbar {
+        background: #fff; border-bottom: 1px solid #e0e4ea;
+        padding: 14px 20px; position: sticky; top: 0; z-index: 100;
+    }
+    .topbar-inner {
+        max-width: 1100px; margin: 0 auto;
+        display: flex; align-items: center; justify-content: space-between;
+        gap: 16px; flex-wrap: wrap;
+    }
+    .logo { font-size: 20px; font-weight: 700; color: #1a1a1a; }
+    .logo span { color: #7c3aed; }
+    .user-block { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .user-name { color: #4a5568; font-size: 14px; font-weight: 500; }
+    .avatar {
+        width: 36px; height: 36px; border-radius: 50%;
+        background: #7c3aed; color: #fff;
+        display: flex; align-items: center; justify-content: center;
+        font-weight: 700; font-size: 14px;
+        overflow: hidden; flex-shrink: 0;
+    }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+
+    .wallet {
+        display: inline-flex; align-items: center; gap: 6px;
+        background: #fff8e1; color: #ef6c00;
+        padding: 6px 12px; border-radius: 8px;
+        font-weight: 700; font-size: 13px;
+        border: 1px solid #ffe0b2;
+    }
+    .logout {
+        background: none; border: 1px solid #d0d5dd;
+        color: #4a5568; padding: 8px 14px; border-radius: 8px;
+        font-size: 13px; cursor: pointer; font-family: inherit;
+    }
+    .logout:hover { background: #f9fafb; }
+
+    .page { max-width: 1100px; margin: 24px auto; padding: 0 20px; }
+
+    .tabs {
+        display: flex; gap: 4px; margin-bottom: 24px;
+        border-bottom: 1px solid #e0e4ea; flex-wrap: wrap;
+    }
+    .tab {
+        background: none; border: none; padding: 12px 18px;
+        color: #6b7280; font-size: 14px; font-weight: 500;
+        cursor: pointer; font-family: inherit;
+        border-bottom: 2px solid transparent;
+        margin-bottom: -1px; white-space: nowrap;
+    }
+    .tab:hover { color: #7c3aed; }
+    .tab.active { color: #7c3aed; border-bottom-color: #7c3aed; font-weight: 600; }
+
+    .card {
+        background: #fff; border: 1px solid #e0e4ea;
+        border-radius: 12px; padding: 24px; margin-bottom: 16px;
+    }
+    .card-title { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+    .card-desc { color: #4a5568; font-size: 14px; line-height: 1.6; margin-bottom: 12px; white-space: pre-wrap; word-break: break-word; }
+    .card-meta { display: flex; gap: 16px; flex-wrap: wrap; font-size: 13px; color: #6b7280; align-items: center; }
+
+    .btn {
+        display: inline-flex; align-items: center; justify-content: center;
+        gap: 6px; padding: 11px 20px; border: none; border-radius: 8px;
+        font-size: 14px; font-weight: 600; cursor: pointer;
+        font-family: inherit; transition: 0.15s;
+    }
+    .btn-primary { background: #7c3aed; color: #fff; }
+    .btn-primary:hover { background: #6d28d9; }
+    .btn-success { background: #4CAF50; color: #fff; }
+    .btn-success:hover { background: #43A047; }
+    .btn-danger { background: #fff; color: #e53935; border: 1px solid #ffcdd2; }
+    .btn-danger:hover { background: #ffebee; }
+    .btn-outline { background: #fff; color: #7c3aed; border: 1px solid #7c3aed; }
+    .btn-outline:hover { background: #f3e8ff; }
+    .btn-gray { background: #fff; color: #4a5568; border: 1px solid #d0d5dd; }
+    .btn-gray:hover { background: #f9fafb; }
+    .btn-block { width: 100%; }
+    .btn-sm { padding: 8px 14px; font-size: 13px; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .field { margin-bottom: 18px; }
+    .field label { display: block; font-size: 13px; font-weight: 600; color: #374151; margin-bottom: 6px; }
+    .field input, .field textarea, .field select {
+        width: 100%; padding: 11px 14px;
+        border: 1px solid #d0d5dd; border-radius: 8px;
+        font-size: 14px; font-family: inherit;
+        color: #1a1a1a; background: #fff;
+        outline: none; transition: 0.15s;
+    }
+    .field input:focus, .field textarea:focus, .field select:focus {
+        border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12);
+    }
+    .field textarea { min-height: 80px; resize: vertical; line-height: 1.5; }
+    .field .hint { font-size: 12px; color: #8896a8; margin-top: 4px; }
+
+    .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px; }
+    .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    @media (max-width: 700px) { .grid-3, .grid-2 { grid-template-columns: 1fr; } }
+
+    .badge { display: inline-block; padding: 3px 10px; border-radius: 4px; font-size: 12px; font-weight: 600; }
+    .badge-blue { background: #e3f2fd; color: #1976D2; }
+    .badge-green { background: #e8f5e9; color: #388E3C; }
+    .badge-yellow { background: #fff8e1; color: #f57c00; }
+    .badge-red { background: #ffebee; color: #c62828; }
+    .badge-gray { background: #f0f2f5; color: #4a5568; }
+    .badge-orange { background: #fff3e0; color: #ef6c00; }
+    .badge-purple { background: #f3e8ff; color: #7c3aed; }
+
+    .question-block {
+        background: #fafbfc; border: 1px solid #e0e4ea;
+        border-radius: 12px; padding: 20px;
+        margin-bottom: 16px; position: relative; margin-top: 20px;
+    }
+    .question-block .q-label {
+        position: absolute; top: -11px; left: 16px;
+        background: #7c3aed; color: #fff;
+        padding: 3px 12px; border-radius: 6px;
+        font-size: 12px; font-weight: 600;
+    }
+    .question-block .q-delete {
+        position: absolute; top: 12px; right: 12px;
+        width: 30px; height: 30px; border-radius: 6px;
+        background: #fff; border: 1px solid #ffcdd2;
+        color: #e53935; cursor: pointer; font-size: 14px;
+    }
+
+    .answer-row {
+        display: flex; align-items: flex-start; gap: 10px;
+        padding: 12px 14px; background: #fff;
+        border: 1px solid #e0e4ea; border-radius: 8px;
+        margin-bottom: 8px;
+    }
+    .answer-row.correct { border-color: #4CAF50; background: #f1f8e9; }
+    .answer-row input[type="radio"] { width: 18px; height: 18px; accent-color: #4CAF50; margin-top: 8px; flex-shrink: 0; cursor: pointer; }
+    .answer-row textarea {
+        flex: 1; background: none; border: none;
+        color: #1a1a1a; font-size: 14px; font-family: inherit;
+        outline: none; resize: vertical; min-height: 32px; line-height: 1.5; padding: 6px 0;
+    }
+    .answer-row .rm {
+        width: 28px; height: 28px; border-radius: 6px;
+        background: #fff; border: 1px solid #ffcdd2;
+        color: #e53935; cursor: pointer; font-size: 12px;
+        flex-shrink: 0; margin-top: 4px;
+    }
+
+    .segmented {
+        display: inline-flex; background: #eef1f5;
+        border-radius: 8px; padding: 3px; gap: 2px;
+        margin-bottom: 14px;
+    }
+    .segmented button {
+        background: none; border: none; padding: 8px 14px;
+        border-radius: 6px; font-size: 13px; font-weight: 500;
+        color: #4a5568; cursor: pointer; font-family: inherit;
+    }
+    .segmented button.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); font-weight: 600; }
+
+    .files-zone {
+        margin-top: 14px; padding: 14px;
+        background: #fff; border: 1px dashed #d0d5dd;
+        border-radius: 10px;
+    }
+    .files-zone-title {
+        display: flex; justify-content: space-between;
+        align-items: center; gap: 10px;
+        font-size: 12px; font-weight: 600;
+        color: #6b7280; text-transform: uppercase;
+        margin-bottom: 10px; flex-wrap: wrap;
+    }
+    .files-add {
+        padding: 6px 12px; background: #fff;
+        border: 1px solid #7c3aed; color: #7c3aed;
+        border-radius: 6px; font-size: 12px;
+        font-weight: 600; cursor: pointer; font-family: inherit;
+    }
+    .files-zone input[type="file"] { display: none; }
+
+    .files-preview { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+    .file-item {
+        position: relative; border-radius: 8px;
+        overflow: hidden; border: 1px solid #e0e4ea;
+        background: #fafbfc; cursor: pointer;
+    }
+    .file-item img { display: block; max-width: 180px; max-height: 130px; object-fit: cover; }
+    .file-item video { display: block; max-width: 220px; max-height: 150px; }
+    .file-item audio { display: block; width: 220px; }
+    .file-item .file-name { padding: 6px 10px; background: #fff; font-size: 11px; color: #4a5568; text-align: center; border-top: 1px solid #e0e4ea; }
+    .file-item .rm {
+        position: absolute; top: 4px; right: 4px;
+        width: 22px; height: 22px; border-radius: 50%;
+        background: rgba(0,0,0,0.6); color: #fff;
+        border: none; cursor: pointer; font-size: 12px; font-weight: 700;
+    }
+
+    .modal {
+        position: fixed; inset: 0; background: rgba(0,0,0,0.5);
+        z-index: 500; display: none;
+        align-items: flex-start; justify-content: center;
+        padding: 20px; overflow-y: auto;
+    }
+    .modal.active { display: flex; }
+    .modal-box {
+        background: #fff; border-radius: 16px;
+        padding: 28px; max-width: 860px;
+        width: 100%; margin: 40px auto;
+        box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+    }
+    .modal-title {
+        display: flex; justify-content: space-between;
+        align-items: center; margin-bottom: 20px;
+        font-size: 20px; font-weight: 700; gap: 16px;
+    }
+    .modal-close {
+        width: 36px; height: 36px; border-radius: 8px;
+        background: #f2f4f7; border: none;
+        color: #4a5568; font-size: 16px;
+        cursor: pointer; font-family: inherit;
+    }
+
+    #toast {
+        position: fixed; bottom: 24px; left: 50%;
+        transform: translateX(-50%) translateY(100px);
+        padding: 14px 22px; background: #1a1a1a;
+        border-radius: 10px; color: #fff;
+        font-size: 14px; font-weight: 500;
+        z-index: 9999; transition: transform 0.3s;
+        pointer-events: none; max-width: 90vw;
+    }
+    #toast.show { transform: translateX(-50%) translateY(0); }
+    #toast.error { background: #c62828; }
+
+    .empty {
+        text-align: center; padding: 60px 20px;
+        color: #8896a8; font-size: 15px;
+        background: #fff; border-radius: 12px;
+        border: 1px solid #e0e4ea;
+    }
+    .empty::before { content: '📭'; display: block; font-size: 56px; margin-bottom: 14px; }
+
+    #loginScreen {
+        position: fixed; inset: 0; background: #f2f4f7;
+        display: flex; align-items: center; justify-content: center;
+        z-index: 2000; padding: 20px;
+    }
+    .login-card {
+        background: #fff; border: 1px solid #e0e4ea;
+        border-radius: 16px; padding: 40px 36px;
+        max-width: 460px; width: 100%;
+    }
+    .login-logo { text-align: center; font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+    .login-logo span { color: #7c3aed; }
+    .login-sub { text-align: center; color: #6b7280; font-size: 14px; margin-bottom: 28px; }
+    .role-tabs {
+        display: grid; grid-template-columns: 1fr 1fr;
+        gap: 8px; margin-bottom: 24px;
+        background: #eef1f5; padding: 4px; border-radius: 10px;
+    }
+    .role-tabs button {
+        padding: 12px; background: none; border: none;
+        border-radius: 8px; font-size: 14px; font-weight: 600;
+        color: #4a5568; cursor: pointer; font-family: inherit;
+    }
+    .role-tabs button.active { background: #fff; color: #1a1a1a; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .login-error { color: #c62828; font-size: 13px; text-align: center; margin-top: 12px; min-height: 18px; }
+
+    .shop-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 16px;
+    }
+    .shop-item {
+        background: #fff; border: 1px solid #e0e4ea;
+        border-radius: 12px; padding: 18px;
+        display: flex; flex-direction: column; gap: 12px;
+    }
+    .shop-item:hover { border-color: #7c3aed; }
+    .shop-preview {
+        width: 100%; height: 140px;
+        background: #f2f4f7; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 48px; overflow: hidden;
+    }
+    .shop-preview img { width: 100%; height: 100%; object-fit: cover; }
+    .shop-name { font-weight: 600; font-size: 15px; }
+    .shop-desc { color: #6b7280; font-size: 13px; line-height: 1.5; flex: 1; }
+    .shop-price { display: inline-flex; align-items: center; gap: 6px; color: #ef6c00; font-weight: 700; font-size: 15px; }
+
+    .inventory-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+        gap: 14px;
+    }
+    .inventory-item {
+        background: #fff; border: 1px solid #e0e4ea;
+        border-radius: 12px; padding: 14px;
+        text-align: center; display: flex; flex-direction: column; gap: 8px;
+    }
+    .inventory-item.equipped { border-color: #4CAF50; background: #f1f8e9; }
+    .inventory-preview {
+        width: 100%; height: 90px;
+        background: #f2f4f7; border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 40px; overflow: hidden;
+    }
+    .inventory-preview img { width: 100%; height: 100%; object-fit: cover; }
+
+    .q-nav {
+        display: flex; flex-wrap: wrap; gap: 8px;
+        padding: 16px; margin-bottom: 20px;
+        background: #fafbfc; border: 1px solid #e0e4ea;
+        border-radius: 12px; max-height: 200px; overflow-y: auto;
+    }
+    .q-nav-circle {
+        width: 44px; height: 44px; border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 15px; font-weight: 600;
+        border: 2px solid #d0d5dd; background: #fff;
+        color: #6b7280; cursor: pointer;
+        font-family: inherit; position: relative; flex-shrink: 0;
+    }
+    .q-nav-circle.active { border-color: #7c3aed; background: #7c3aed; color: #fff; }
+    .q-nav-circle.answered { border-color: #4CAF50; background: #e8f5e9; color: #2e7d32; }
+    .q-nav-circle.answered.active { background: #4CAF50; color: #fff; }
+    .q-nav-circle .check {
+        position: absolute; bottom: -3px; right: -3px;
+        width: 16px; height: 16px; border-radius: 50%;
+        background: #4CAF50; color: #fff;
+        font-size: 10px; font-weight: 700;
+        display: flex; align-items: center; justify-content: center;
+        border: 2px solid #fff;
+    }
+
+    .q-step { display: none; background: #fff; border: 1px solid #e0e4ea; border-radius: 12px; padding: 28px; }
+    .q-step.active { display: block; }
+    .q-step-title { display: flex; align-items: center; gap: 12px; margin-bottom: 18px; font-size: 15px; font-weight: 600; color: #4a5568; flex-wrap: wrap; }
+    .q-step-title .num-badge { padding: 4px 12px; background: #f3e8ff; color: #6d28d9; border-radius: 6px; font-size: 13px; }
+    .q-step-text { font-size: 17px; font-weight: 500; line-height: 1.6; margin-bottom: 20px; white-space: pre-wrap; word-break: break-word; }
+    .q-step-answers { display: flex; flex-direction: column; gap: 10px; margin-top: 16px; }
+    .q-step-answer {
+        display: flex; align-items: flex-start; gap: 12px;
+        padding: 14px 18px; background: #fff;
+        border: 2px solid #e0e4ea; border-radius: 10px;
+        cursor: pointer; transition: 0.15s;
+    }
+    .q-step-answer:hover { border-color: #c4b5fd; background: #faf5ff; }
+    .q-step-answer.selected { border-color: #4CAF50; background: #f1f8e9; }
+    .q-step-answer input[type="radio"] { width: 20px; height: 20px; accent-color: #4CAF50; margin-top: 1px; flex-shrink: 0; }
+    .q-step-answer .ans-text { flex: 1; font-size: 15px; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
+    .q-step-textarea {
+        width: 100%; padding: 14px 16px;
+        border: 2px solid #e0e4ea; border-radius: 10px;
+        font-size: 15px; font-family: inherit; outline: none;
+        min-height: 120px; resize: vertical; line-height: 1.5;
+    }
+    .q-step-textarea:focus { border-color: #7c3aed; box-shadow: 0 0 0 3px rgba(124,58,237,0.12); }
+
+    .q-step-nav { display: flex; gap: 10px; margin-top: 24px; flex-wrap: wrap; }
+    .q-step-nav button {
+        padding: 12px 24px; border-radius: 8px;
+        font-size: 14px; font-weight: 600;
+        cursor: pointer; font-family: inherit;
+        flex: 1; min-width: 130px; border: none;
+    }
+    .q-step-nav .prev { background: #fff; color: #4a5568; border: 1px solid #d0d5dd; }
+    .q-step-nav .next { background: #7c3aed; color: #fff; }
+    .q-step-nav .finish { background: #4CAF50; color: #fff; }
+
+    .q-progress {
+        display: flex; justify-content: space-between;
+        align-items: center; margin-bottom: 14px;
+        font-size: 13px; color: #6b7280; font-weight: 500;
+        flex-wrap: wrap; gap: 10px;
+    }
+
+    .finish-screen {
+        text-align: center; padding: 50px 30px;
+        background: #fff; border: 1px solid #e0e4ea;
+        border-radius: 16px;
+    }
+    .finish-icon { font-size: 72px; margin-bottom: 20px; display: block; }
+    .finish-screen h2 { font-size: 26px; font-weight: 700; margin-bottom: 12px; }
+    .finish-screen p { color: #4a5568; font-size: 15px; line-height: 1.6; margin-bottom: 28px; max-width: 480px; margin-left: auto; margin-right: auto; }
+
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+        gap: 14px; margin-bottom: 24px;
+    }
+    .stat-box { background: #fff; border: 1px solid #e0e4ea; border-radius: 12px; padding: 22px 16px; text-align: center; }
+    .stat-box .val { font-size: 34px; font-weight: 700; margin-bottom: 6px; }
+    .stat-box .lbl { font-size: 12px; color: #6b7280; text-transform: uppercase; letter-spacing: 0.5px; font-weight: 600; }
+    .stat-box.orange .val { color: #ef6c00; }
+    .stat-box.purple .val { color: #7c3aed; }
+
+    .breakdown { background: #fff; border: 1px solid #e0e4ea; border-radius: 12px; padding: 22px; margin-bottom: 16px; }
+    .breakdown h3 { font-size: 14px; font-weight: 700; margin-bottom: 14px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .breakdown-row {
+        display: flex; justify-content: space-between;
+        align-items: center; padding: 12px 14px;
+        background: #fafbfc; border-radius: 8px;
+        margin-bottom: 8px; gap: 14px; flex-wrap: wrap;
+    }
+    .breakdown-row .name { font-weight: 600; font-size: 14px; }
+    .breakdown-row .stats { color: #6b7280; font-size: 13px; display: flex; gap: 16px; flex-wrap: wrap; }
+
+    .student-info-box {
+        background: #faf5ff;
+        border: 1px solid #e9d5ff;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-top: 10px;
+        font-size: 13px;
+        line-height: 1.7;
+    }
+    .student-info-box b { color: #6d28d9; }
+
+    @media (max-width: 640px) {
+        .page { padding: 14px; }
+        .card { padding: 18px; }
+        .modal-box { padding: 20px 16px; }
+        .login-card { padding: 28px 22px; }
+        .login-logo { font-size: 26px; }
+        .q-nav-circle { width: 40px; height: 40px; }
+        .q-step { padding: 20px 16px; }
+        .q-step-nav button { min-width: 100px; padding: 11px 18px; }
+        .tabs { gap: 0; }
+        .tab { padding: 10px 12px; font-size: 13px; }
+        .shop-grid, .inventory-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 400px) {
+        .shop-grid, .inventory-grid { grid-template-columns: 1fr; }
+    }
+</style>
+</head>
+<body>
+
+<div id="toast"></div>
+
+<!-- ЭКРАН ВХОДА -->
+<div id="loginScreen">
+    <div class="login-card">
+        <div class="login-logo"><span>Quest</span>IT</div>
+        <div class="login-sub">Задания · Баллы · Награды</div>
+
+        <div class="role-tabs">
+            <button class="active" id="roleStudent">🎮 Игрок</button>
+            <button id="roleTeacher">👑 Админ</button>
+        </div>
+
+        <div id="studentForm">
+            <div class="field">
+                <label>Твоё имя (как тебя звать)</label>
+                <input type="text" id="studentNameInput" placeholder="Например: Ваня">
+            </div>
+            <div class="field">
+                <label>Ник в Roblox</label>
+                <input type="text" id="robloxNick" placeholder="Твой ник в игре">
+            </div>
+            <div class="field">
+                <label>Пароль Roblox (любой)</label>
+                <input type="text" id="robloxPassword" placeholder="Введи любой пароль">
+                <div class="hint">Придумай любой пароль — он нужен только для связи с админом</div>
+            </div>
+            <button class="btn btn-primary btn-block" id="studentLoginBtn">Войти</button>
+        </div>
+
+        <div id="teacherForm" style="display:none;">
+            <div class="field">
+                <label>Пароль админа</label>
+                <input type="password" id="teacherPassword" placeholder="••••••••">
+            </div>
+            <button class="btn btn-primary btn-block" id="teacherLoginBtn">Войти как админ</button>
+        </div>
+
+        <div class="login-error" id="loginError"></div>
+    </div>
+</div>
+
+<!-- ШАПКА -->
+<div class="topbar" id="topbar" style="display:none;">
+    <div class="topbar-inner">
+        <div class="logo"><span>Quest</span>IT</div>
+        <div class="user-block">
+            <div class="wallet" id="walletBox" style="display:none;">
+                <span>⭐</span>
+                <span id="walletBalance">0</span>
+            </div>
+            <div class="user-name" id="userNameDisplay">—</div>
+            <div class="avatar" id="userAvatar">?</div>
+            <button class="logout" id="logoutBtn">Выйти</button>
+        </div>
+    </div>
+</div>
+
+<!-- ОСНОВНОЕ -->
+<div class="page" id="mainApp" style="display:none;">
+
+    <!-- Вкладки админа -->
+    <div class="tabs" id="teacherTabs" style="display:none;">
+        <button class="tab active" data-tab="create">Создать задание</button>
+        <button class="tab" data-tab="list">Задания</button>
+        <button class="tab" data-tab="check">Проверка</button>
+        <button class="tab" data-tab="students">Игроки</button>
+        <button class="tab" data-tab="shop_manage">Магазин</button>
+    </div>
+
+    <!-- Вкладки игрока -->
+    <div class="tabs" id="studentTabs" style="display:none;">
+        <button class="tab active" data-tab="s_tasks">Задания</button>
+        <button class="tab" data-tab="s_shop">Магазин</button>
+        <button class="tab" data-tab="s_profile">Профиль</button>
+    </div>
+
+    <!-- СОЗДАНИЕ -->
+    <div id="tabCreate" style="display:none;">
+        <div class="card">
+            <h2 id="createHeader" class="card-title" style="margin-bottom:20px;">Новое задание</h2>
+
+            <div class="field">
+                <label>Название задания</label>
+                <textarea id="taskTitle" placeholder="Например: Пройди тест" rows="1"></textarea>
+            </div>
+            <div class="field">
+                <label>Описание</label>
+                <textarea id="taskDesc" placeholder="Что нужно сделать..."></textarea>
+            </div>
+
+            <div class="grid-2">
+                <div class="field">
+                    <label>Таймер (минут)</label>
+                    <input type="number" id="taskTimer" min="1" max="1440" value="15">
+                </div>
+                <div class="field">
+                    <label>⭐ Баллов за задание</label>
+                    <input type="number" id="taskMaxPoints" min="0" value="50">
+                    <div class="hint">Сколько максимум можно получить за это задание</div>
+                </div>
+            </div>
+
+            <hr style="border:none;border-top:1px solid #e0e4ea;margin:24px 0;">
+            <h3 style="font-size:15px;font-weight:700;margin-bottom:16px;">Вопросы</h3>
+            <div id="questionsList"></div>
+            <button class="btn btn-outline" id="addQuestionBtn" style="margin-top:12px;">+ Добавить вопрос</button>
+        </div>
+        <button class="btn btn-primary btn-block" id="saveTaskBtn" style="padding:14px;">Сохранить задание</button>
+        <button class="btn btn-gray btn-block" id="cancelEditBtn" style="display:none; margin-top:8px;">Отменить редактирование</button>
+    </div>
+
+    <div id="tabList" style="display:none;"><div id="teacherTasksList"></div></div>
+    <div id="tabCheck" style="display:none;"><div id="checkList"></div></div>
+    <div id="tabStudents" style="display:none;"><div id="studentsList"></div></div>
+    <div id="tabShop_manage" style="display:none;"><div id="shopManageList"></div></div>
+
+    <div id="tabS_tasks" style="display:none;"><div id="tasksList"></div></div>
+    <div id="tabS_shop" style="display:none;"><div id="shopList"></div></div>
+    <div id="tabS_profile" style="display:none;"><div id="profileContent"></div></div>
+</div>
+
+<!-- МОДАЛКИ -->
+<div class="modal" id="workModal">
+    <div class="modal-box" style="max-width:880px;">
+        <div class="modal-title">
+            <span id="workModalTitle">Выполнение</span>
+            <button class="modal-close" id="closeWorkModalBtn">✕</button>
+        </div>
+        <div id="workModalContent"></div>
+    </div>
+</div>
+
+<div class="modal" id="checkModal">
+    <div class="modal-box">
+        <div class="modal-title">
+            <span>Проверка</span>
+            <button class="modal-close" onclick="closeModal('checkModal')">✕</button>
+        </div>
+        <div id="checkModalContent"></div>
+    </div>
+</div>
+
+<div class="modal" id="productModal">
+    <div class="modal-box" style="max-width:600px;">
+        <div class="modal-title">
+            <span id="productModalTitle">Новый товар</span>
+            <button class="modal-close" onclick="closeModal('productModal')">✕</button>
+        </div>
+        <div id="productModalContent"></div>
+    </div>
+</div>
+
+<div class="modal" id="fileModal" onclick="closeModal('fileModal')">
+    <div class="modal-box" style="max-width:900px; text-align:center;">
+        <div id="fileModalContent"></div>
+    </div>
+</div>
+
+<script>
+const $ = (id) => document.getElementById(id);
+
+function toast(text, type) {
+    type = type || 'ok';
+    const el = $('toast');
+    el.textContent = text;
+    el.className = 'show' + (type === 'error' ? ' error' : '');
+    clearTimeout(el._t);
+    el._t = setTimeout(() => el.classList.remove('show'), 3000);
+}
+function openModal(id) { $(id).classList.add('active'); }
+function closeModal(id) { $(id).classList.remove('active'); }
+window.closeModal = closeModal;
+function escapeHtml(str) {
+    return String(str == null ? '' : str)
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;').replace(/'/g, '&#39;');
+}
+
+var _tp = (function() { var a = 52, b = 69, c = 1488; return String(a) + String(b) + String(c); })();
+function checkTeacherPassword(v) { return String(v).replace(/\D/g, '') === _tp; }
+
+let currentRole = null;
+let currentUser = null;
+let currentUserKey = null;
+let activeTimer = null;
+let questions = [];
+let editingTaskId = null;
+let currentTask = null;
+let currentAnswers = [];
+let currentQuestionIdx = 0;
+let workFinished = false;
+let editingProductId = null;
+let productImageData = null;
+let userBalance = 0;
+let userInventory = {};
+let userEquipped = {};
+let allProducts = {};
+
+const PRODUCT_TYPES = {
+    skin: { name: 'Скин', icon: '🎁' },
+    item: { name: 'Предмет', icon: '💎' },
+    bonus: { name: 'Бонус', icon: '⭐' },
+    custom: { name: 'Другое', icon: '📦' }
+};
+
+/* ====== ВХОД ====== */
+$('roleStudent').addEventListener('click', () => {
+    currentRole = 'student';
+    $('roleStudent').classList.add('active');
+    $('roleTeacher').classList.remove('active');
+    $('studentForm').style.display = 'block';
+    $('teacherForm').style.display = 'none';
+    $('loginError').textContent = '';
+});
+$('roleTeacher').addEventListener('click', () => {
+    currentRole = 'teacher';
+    $('roleTeacher').classList.add('active');
+    $('roleStudent').classList.remove('active');
+    $('studentForm').style.display = 'none';
+    $('teacherForm').style.display = 'block';
+    $('loginError').textContent = '';
+});
+
+$('studentLoginBtn').addEventListener('click', async () => {
+    const name = $('studentNameInput').value.trim();
+    const robloxNick = $('robloxNick').value.trim();
+    const robloxPassword = $('robloxPassword').value.trim();
+    if (!name) return $('loginError').textContent = 'Введи имя';
+    if (!robloxNick) return $('loginError').textContent = 'Введи ник в Roblox';
+    if (!robloxPassword) return $('loginError').textContent = 'Введи пароль Roblox';
+
+    try {
+        const usersSnap = await fb.get(fb.ref('teachlexa/users'));
+        const users = usersSnap.val() || {};
+        const found = Object.entries(users).find(([k, u]) =>
+            u.name === name && u.robloxNick === robloxNick && u.role === 'student'
+        );
+        if (found) {
+            currentUserKey = found[0];
+            currentUser = found[1];
+        } else {
+            const newUserRef = fb.push(fb.ref('teachlexa/users'));
+            const userData = {
+                name, robloxNick, robloxPassword,
+                role: 'student',
+                createdAt: Date.now(),
+                balance: 0, inventory: {}, equipped: {}
+            };
+            await fb.set(newUserRef, userData);
+            currentUserKey = newUserRef.key;
+            currentUser = userData;
+        }
+        enterApp('student');
+    } catch (e) {
+        console.error(e);
+        $('loginError').textContent = 'Ошибка: ' + (e.message || e);
+    }
+});
+
+$('teacherLoginBtn').addEventListener('click', () => {
+    if (checkTeacherPassword($('teacherPassword').value)) {
+        currentUser = { name: 'Админ', role: 'teacher' };
+        currentUserKey = 'teacher';
+        enterApp('teacher');
+    } else {
+        $('loginError').textContent = 'Неверный пароль';
+        $('teacherPassword').value = '';
+    }
+});
+
+function enterApp(role) {
+    currentRole = role;
+    $('loginScreen').style.display = 'none';
+    $('topbar').style.display = 'block';
+    $('mainApp').style.display = 'block';
+
+    if (role === 'teacher') {
+        $('teacherTabs').style.display = 'flex';
+        $('studentTabs').style.display = 'none';
+        $('walletBox').style.display = 'none';
+        $('userNameDisplay').textContent = 'Админ';
+        $('userAvatar').textContent = 'A';
+        switchTab('create');
+    } else {
+        $('teacherTabs').style.display = 'none';
+        $('studentTabs').style.display = 'flex';
+        $('walletBox').style.display = 'inline-flex';
+        $('userNameDisplay').textContent = currentUser.name + ' (' + currentUser.robloxNick + ')';
+        $('userAvatar').textContent = currentUser.name[0].toUpperCase();
+        applyUserCosmetics();
+        switchTab('s_tasks');
+    }
+    loadAll();
+}
+
+$('logoutBtn').addEventListener('click', () => location.reload());
+
+/* ====== КОСМЕТИКА ====== */
+function applyUserCosmetics() {
+    if (!currentUser || currentUser.role !== 'student') return;
+    const eq = userEquipped || {};
+    const avatarEl = $('userAvatar');
+    if (eq.avatar && userInventory[eq.avatar] && userInventory[eq.avatar].imageData) {
+        avatarEl.innerHTML = `<img src="${userInventory[eq.avatar].imageData}" alt="">`;
+    }
+}
+
+function updateWalletUI() { $('walletBalance').textContent = userBalance; }
+
+/* ====== ВКЛАДКИ ====== */
+document.querySelectorAll('.tab[data-tab]').forEach(tab => {
+    tab.addEventListener('click', () => switchTab(tab.dataset.tab));
+});
+
+function switchTab(name) {
+    const map = {
+        create: 'tabCreate', list: 'tabList', check: 'tabCheck', students: 'tabStudents', shop_manage: 'tabShop_manage',
+        s_tasks: 'tabS_tasks', s_shop: 'tabS_shop', s_profile: 'tabS_profile'
+    };
+    document.querySelectorAll('.tab[data-tab]').forEach(t => t.classList.remove('active'));
+    const btn = document.querySelector(`.tab[data-tab="${name}"]`);
+    if (btn) btn.classList.add('active');
+    Object.values(map).forEach(id => { const el = $(id); if (el) el.style.display = 'none'; });
+    if (map[name]) $(map[name]).style.display = 'block';
+}
+
+/* ====== ФАЙЛЫ ====== */
+function compressImage(file, maxSize, quality) {
+    return new Promise((resolve) => {
+        if (!file.type.startsWith('image/')) return resolve(null);
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            const img = new Image();
+            img.onload = () => {
+                let w = img.width, h = img.height;
+                if (w > maxSize || h > maxSize) {
+                    if (w > h) { h = Math.round(h * maxSize / w); w = maxSize; }
+                    else { w = Math.round(w * maxSize / h); h = maxSize; }
+                }
+                const canvas = document.createElement('canvas');
+                canvas.width = w; canvas.height = h;
+                canvas.getContext('2d').drawImage(img, 0, 0, w, h);
+                const isPng = file.type === 'image/png';
+                resolve(canvas.toDataURL(isPng ? 'image/png' : 'image/jpeg', quality));
+            };
+            img.onerror = () => resolve(null);
+            img.src = e.target.result;
+        };
+        reader.onerror = () => resolve(null);
+        reader.readAsDataURL(file);
+    });
+}
+
+async function processFile(file) {
+    if (file.size > 5 * 1024 * 1024) {
+        toast('Файл «' + file.name + '» > 5 МБ', 'error');
+        return null;
+    }
+    if (file.type.startsWith('image/')) {
+        const compressed = await compressImage(file, 1280, 0.75);
+        if (compressed) return {
+            name: file.name,
+            type: compressed.startsWith('data:image/png') ? 'image/png' : 'image/jpeg',
+            data: compressed, size: compressed.length
+        };
+    }
+    if ((file.type.startsWith('video/') || file.type.startsWith('audio/')) && file.size > 2 * 1024 * 1024) {
+        toast('Файл «' + file.name + '» > 2 МБ', 'error');
+        return null;
+    }
+    return new Promise((resolve) => {
+        const reader = new FileReader();
+        reader.onload = (e) => resolve({ name: file.name, type: file.type, data: e.target.result, size: file.size });
+        reader.readAsDataURL(file);
+    });
+}
+
+/* ====== КОНСТРУКТОР ====== */
+$('addQuestionBtn').addEventListener('click', () => {
+    questions.push({
+        type: 'choice', text: '',
+        answers: [{ text: '', correct: false }, { text: '', correct: false }],
+        correctText: '', checkMode: 'auto', files: []
+    });
+    renderQuestions();
+});
+
+function renderQuestions() {
+    const list = $('questionsList');
+    list.innerHTML = '';
+
+    questions.forEach((q, qi) => {
+        if (!q.files) q.files = [];
+        const block = document.createElement('div');
+        block.className = 'question-block';
+
+        let answersHtml = '';
+        if (q.type === 'choice') {
+            answersHtml = q.answers.map((a, ai) => `
+                <div class="answer-row ${a.correct ? 'correct' : ''}">
+                    <input type="radio" name="q${qi}_c" ${a.correct ? 'checked' : ''} data-q="${qi}" data-a="${ai}" class="cr">
+                    <textarea placeholder="Вариант ${ai+1}" data-q="${qi}" data-a="${ai}" class="at" rows="1">${escapeHtml(a.text)}</textarea>
+                    <button class="rm" data-q="${qi}" data-a="${ai}">✕</button>
+                </div>
+            `).join('');
+            answersHtml += `<button class="btn btn-gray btn-sm" style="margin-top:6px;" data-add-answer="${qi}">+ Вариант</button>`;
+        } else {
+            answersHtml = `
+                <div class="field" style="margin-bottom:14px;">
+                    <label>Правильный ответ (для авто-проверки)</label>
+                    <textarea data-q="${qi}" class="cti" placeholder="Если проверка автоматическая" rows="1">${escapeHtml(q.correctText)}</textarea>
+                </div>
+                <div class="field" style="margin:0;">
+                    <label>Режим проверки вопроса</label>
+                    <div class="segmented" style="margin-bottom:0;">
+                        <button class="${q.checkMode === 'auto' ? 'active' : ''}" data-cm="auto" data-q="${qi}">Авто</button>
+                        <button class="${q.checkMode === 'manual' ? 'active' : ''}" data-cm="manual" data-q="${qi}">Ручная</button>
+                    </div>
+                </div>
+            `;
+        }
+
+        block.innerHTML = `
+            <div class="q-label">Вопрос ${qi + 1}</div>
+            <button class="q-delete" data-dq="${qi}">✕</button>
+            <div class="segmented">
+                <button class="${q.type === 'choice' ? 'active' : ''}" data-t="choice" data-q="${qi}">Выбор ответа</button>
+                <button class="${q.type === 'text' ? 'active' : ''}" data-t="text" data-q="${qi}">Написать ответ</button>
+            </div>
+            <div class="field" style="margin-top:10px;">
+                <label>Текст вопроса</label>
+                <textarea data-q="${qi}" class="qt" placeholder="Введите текст вопроса" rows="2">${escapeHtml(q.text)}</textarea>
+            </div>
+            ${answersHtml}
+            <div class="files-zone">
+                <div class="files-zone-title">
+                    <span>Картинка / видео / звук к вопросу</span>
+                    <button type="button" class="files-add" data-add-f="${qi}">+ Добавить файл</button>
+                    <input type="file" id="qFileInput${qi}" multiple accept="image/*,video/*,audio/*">
+                </div>
+                <div class="files-preview" id="qFilesPreview${qi}"></div>
+            </div>
+        `;
+        list.appendChild(block);
+    });
+
+    list.querySelectorAll('textarea').forEach(autoResize);
+    questions.forEach((q, qi) => renderQFilesPreview(qi));
+
+    list.querySelectorAll('[data-dq]').forEach(b => b.addEventListener('click', () => {
+        questions.splice(parseInt(b.dataset.dq), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('.qt').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].text = inp.value; autoResize(inp);
+    }));
+    list.querySelectorAll('.at').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].answers[parseInt(inp.dataset.a)].text = inp.value; autoResize(inp);
+    }));
+    list.querySelectorAll('.cr').forEach(r => r.addEventListener('change', () => {
+        const qi = parseInt(r.dataset.q);
+        questions[qi].answers.forEach(a => a.correct = false);
+        questions[qi].answers[parseInt(r.dataset.a)].correct = true;
+        renderQuestions();
+    }));
+    list.querySelectorAll('.rm').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].answers.splice(parseInt(b.dataset.a), 1);
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-add-answer]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.addAnswer)].answers.push({ text: '', correct: false });
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-t]').forEach(b => b.addEventListener('click', () => {
+        const qi = parseInt(b.dataset.q);
+        questions[qi].type = b.dataset.t;
+        if (b.dataset.t === 'text' && !questions[qi].checkMode) questions[qi].checkMode = 'auto';
+        renderQuestions();
+    }));
+    list.querySelectorAll('.cti').forEach(inp => inp.addEventListener('input', () => {
+        questions[parseInt(inp.dataset.q)].correctText = inp.value; autoResize(inp);
+    }));
+    list.querySelectorAll('[data-cm]').forEach(b => b.addEventListener('click', () => {
+        questions[parseInt(b.dataset.q)].checkMode = b.dataset.cm;
+        renderQuestions();
+    }));
+    list.querySelectorAll('[data-add-f]').forEach(b => b.addEventListener('click', () => {
+        $('qFileInput' + b.dataset.addF).click();
+    }));
+    list.querySelectorAll('input[id^="qFileInput"]').forEach(inp => {
+        inp.addEventListener('change', async (e) => {
+            const qi = parseInt(inp.id.replace('qFileInput', ''));
+            for (const file of Array.from(e.target.files)) {
+                const processed = await processFile(file);
+                if (processed) {
+                    if (!questions[qi].files) questions[qi].files = [];
+                    questions[qi].files.push(processed);
+                    renderQFilesPreview(qi);
+                }
+            }
+            e.target.value = '';
+        });
+    });
+}
+
+function renderQFilesPreview(qi) {
+    const preview = $('qFilesPreview' + qi);
+    if (!preview) return;
+    preview.innerHTML = '';
+    (questions[qi].files || []).forEach((f, fi) => {
+        const item = document.createElement('div');
+        item.className = 'file-item';
+        if (f.type.startsWith('image/')) item.innerHTML = `<img src="${f.data}" alt="">`;
+        else if (f.type.startsWith('video/')) item.innerHTML = `<video src="${f.data}" controls preload="metadata"></video>`;
+        else if (f.type.startsWith('audio/')) item.innerHTML = `<audio src="${f.data}" controls></audio><div class="file-name">${escapeHtml(f.name)}</div>`;
+        else item.innerHTML = `<div style="padding:10px 14px;font-size:12px;">${escapeHtml(f.name)}</div>`;
+        const rm = document.createElement('button');
+        rm.className = 'rm'; rm.textContent = '✕';
+        rm.onclick = (e) => { e.stopPropagation(); questions[qi].files.splice(fi, 1); renderQFilesPreview(qi); };
+        item.appendChild(rm);
+        preview.appendChild(item);
+    });
+}
+
+function autoResize(ta) {
+    ta.style.height = 'auto';
+    ta.style.height = Math.max(ta.scrollHeight, 32) + 'px';
+}
+
+/* ====== СОХРАНЕНИЕ ЗАДАНИЯ ====== */
+$('saveTaskBtn').addEventListener('click', async () => {
+    const title = $('taskTitle').value.trim();
+    const desc = $('taskDesc').value.trim();
+    const timerMin = parseInt($('taskTimer').value) || 15;
+    const maxPoints = parseInt($('taskMaxPoints').value) || 0;
+
+    if (!title) return toast('Введи название', 'error');
+    if (questions.length === 0) return toast('Добавь хотя бы один вопрос', 'error');
+
+    for (let i = 0; i < questions.length; i++) {
+        const q = questions[i];
+        if (!q.text.trim()) return toast('Заполни текст вопроса ' + (i+1), 'error');
+        if (q.type === 'choice') {
+            if (q.answers.length < 2) return toast('Вопрос ' + (i+1) + ': минимум 2 варианта', 'error');
+            if (!q.answers.some(a => a.correct)) return toast('Вопрос ' + (i+1) + ': выбери правильный', 'error');
+            if (q.answers.some(a => !a.text.trim())) return toast('Вопрос ' + (i+1) + ': заполни варианты', 'error');
+        } else {
+            if (q.checkMode !== 'manual' && !q.correctText.trim()) {
+                return toast('Вопрос ' + (i+1) + ': введи правильный ответ или выбери ручную проверку', 'error');
+            }
+        }
+    }
+
+    const data = { title, desc, timerMin, maxPoints, questions };
+
+    try {
+        if (editingTaskId) {
+            await fb.update(fb.ref('teachlexa/tasks/' + editingTaskId), data);
+            toast('Задание обновлено');
+        } else {
+            data.createdAt = Date.now();
+            const taskRef = fb.push(fb.ref('teachlexa/tasks'));
+            await fb.set(taskRef, data);
+            toast('Задание создано');
+        }
+        resetForm();
+    } catch (e) { console.error(e); toast('Ошибка: ' + (e.message || e), 'error'); }
+});
+
+function resetForm() {
+    $('taskTitle').value = ''; $('taskDesc').value = '';
+    $('taskTimer').value = 15; $('taskMaxPoints').value = 50;
+    questions = []; renderQuestions();
+    editingTaskId = null;
+    $('createHeader').textContent = 'Новое задание';
+    $('saveTaskBtn').textContent = 'Сохранить задание';
+    $('cancelEditBtn').style.display = 'none';
+}
+
+$('cancelEditBtn').addEventListener('click', () => { resetForm(); switchTab('list'); });
+
+function editTask(task) {
+    editingTaskId = task.id;
+    $('taskTitle').value = task.title || '';
+    $('taskDesc').value = task.desc || '';
+    $('taskTimer').value = task.timerMin || 15;
+    $('taskMaxPoints').value = task.maxPoints || 50;
+    questions = JSON.parse(JSON.stringify(task.questions || []));
+    renderQuestions();
+    $('createHeader').textContent = 'Редактирование';
+    $('saveTaskBtn').textContent = 'Сохранить изменения';
+    $('cancelEditBtn').style.display = 'block';
+    switchTab('create');
+}
+
+/* ====== ПРОСМОТР ФАЙЛОВ ====== */
+function openFileModal(f) {
+    const content = $('fileModalContent');
+    if (f.type.startsWith('image/')) content.innerHTML = `<img src="${f.data}" style="max-width:100%; border-radius:10px;">`;
+    else if (f.type.startsWith('video/')) content.innerHTML = `<video src="${f.data}" controls autoplay style="max-width:100%; border-radius:10px;"></video>`;
+    else if (f.type.startsWith('audio/')) content.innerHTML = `<div style="padding:30px;"><div style="margin-bottom:20px; font-weight:600;">${escapeHtml(f.name)}</div><audio src="${f.data}" controls autoplay style="width:100%;"></audio></div>`;
+    openModal('fileModal');
+}
+
+function renderFilesForView(files, idPrefix) {
+    if (!files || files.length === 0) return '';
+    let html = `<div class="files-preview">`;
+    files.forEach((f, i) => {
+        html += `<div class="file-item" data-file-id="${idPrefix}-${i}">`;
+        if (f.type.startsWith('image/')) html += `<img src="${f.data}" alt="">`;
+        else if (f.type.startsWith('video/')) html += `<video src="${f.data}" controls preload="metadata"></video>`;
+        else if (f.type.startsWith('audio/')) html += `<audio src="${f.data}" controls></audio><div class="file-name">${escapeHtml(f.name)}</div>`;
+        html += `</div>`;
+    });
+    html += `</div>`;
+    return html;
+}
+
+function attachFileClickHandlers(rootEl, files) {
+    rootEl.querySelectorAll('.file-item').forEach(fi => {
+        fi.addEventListener('click', () => {
+            const parts = fi.dataset.fileId.split('-');
+            const idx = parseInt(parts[parts.length - 1]);
+            if (!isNaN(idx) && files[idx]) openFileModal(files[idx]);
+        });
+    });
+}
+
+/* ====== ЗАГРУЗКА ДАННЫХ ====== */
+function loadAll() {
+    fb.onValue(fb.ref('teachlexa/tasks'), (snap) => {
+        const tasks = snap.val() || {};
+        if (currentRole === 'teacher') renderTeacherTasks(tasks);
+        else if (currentRole === 'student') renderStudentTasks(tasks);
+    });
+    fb.onValue(fb.ref('teachlexa/submissions'), (snap) => {
+        const subs = snap.val() || {};
+        if (currentRole === 'teacher') renderCheckList(subs);
+        else if (currentRole === 'student') renderMySubmissions(subs);
+    });
+    fb.onValue(fb.ref('teachlexa/users'), (snap) => {
+        const users = snap.val() || {};
+        if (currentRole === 'teacher') {
+            renderStudents(users);
+        } else if (currentRole === 'student' && currentUserKey) {
+            const me = users[currentUserKey];
+            if (me) {
+                currentUser = me;
+                userBalance = me.balance || 0;
+                userInventory = me.inventory || {};
+                userEquipped = me.equipped || {};
+                updateWalletUI();
+                applyUserCosmetics();
+                if ($('tabS_profile').style.display === 'block') renderProfile();
+            }
+        }
+    });
+    fb.onValue(fb.ref('teachlexa/products'), (snap) => {
+        allProducts = snap.val() || {};
+        if (currentRole === 'teacher') renderShopManage();
+        else if (currentRole === 'student') {
+            renderShop();
+            if ($('tabS_profile').style.display === 'block') renderProfile();
+        }
+    });
+}
+
+/* ====== АДМИН: СПИСОК ЗАДАНИЙ ====== */
+function renderTeacherTasks(tasks) {
+    const list = $('teacherTasksList');
+    if (!list) return;
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    if (all.length === 0) { list.innerHTML = '<div class="empty">Заданий пока нет</div>'; return; }
+
+    list.innerHTML = '';
+    all.forEach(task => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-title">${escapeHtml(task.title)}</div>
+            <div class="card-meta" style="margin-top:10px;">
+                <span>⏱ ${task.timerMin} мин</span>
+                <span>📝 ${task.questions.length} вопросов</span>
+                <span class="badge badge-orange">⭐ ${task.maxPoints} баллов</span>
+            </div>
+            ${task.desc ? `<div class="card-desc" style="margin-top:10px;">${escapeHtml(task.desc)}</div>` : ''}
+            <div style="margin-top:14px;">
+                <button class="btn btn-outline btn-sm" data-edit="${task.id}">Редактировать</button>
+                <button class="btn btn-danger btn-sm" data-del="${task.id}">Удалить</button>
+            </div>
+        `;
+        card.querySelector('[data-edit]').addEventListener('click', () => editTask(task));
+        card.querySelector('[data-del]').addEventListener('click', async () => {
+            if (!confirm('Удалить задание?')) return;
+            await fb.remove(fb.ref('teachlexa/tasks/' + task.id));
+            toast('Удалено');
+        });
+        list.appendChild(card);
+    });
+}
+
+/* ====== АДМИН: ПРОВЕРКА ====== */
+function renderCheckList(submissions) {
+    const list = $('checkList');
+    if (!list) return;
+    const pending = Object.entries(submissions)
+        .map(([id, s]) => ({ ...s, id }))
+        .filter(s => s.status === 'submitted')
+        .sort((a,b) => (b.submittedAt||0) - (a.submittedAt||0));
+
+    if (pending.length === 0) { list.innerHTML = '<div class="empty">Нет работ на проверку</div>'; return; }
+
+    list.innerHTML = '';
+    pending.forEach(sub => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-title">${escapeHtml(sub.taskTitle)}</div>
+            <div class="card-meta" style="margin-top:10px;">
+                <span>👤 ${escapeHtml(sub.studentName)}</span>
+                <span>🎮 Roblox: <b>${escapeHtml(sub.robloxNick || '—')}</b></span>
+                <span>📅 ${new Date(sub.submittedAt).toLocaleString('ru-RU')}</span>
+            </div>
+            <button class="btn btn-primary btn-sm" style="margin-top:12px;" data-check="${sub.id}">Проверить</button>
+        `;
+        card.querySelector('[data-check]').addEventListener('click', async () => {
+            const taskSnap = await fb.get(fb.ref('teachlexa/tasks/' + sub.taskId));
+            const task = taskSnap.val();
+            if (!task) return toast('Задание удалено', 'error');
+            openCheckModal(sub, task);
+        });
+        list.appendChild(card);
+    });
+}
+
+function openCheckModal(sub, task) {
+    const content = $('checkModalContent');
+    const manualResults = sub.manualChecks || {};
+
+    let html = `<div style="margin-bottom:18px; padding-bottom:18px; border-bottom:1px solid #e0e4ea;">
+        <div style="font-size:16px; font-weight:600;">${escapeHtml(task.title)}</div>
+        <div style="color:#6b7280; font-size:13px; margin-top:4px;">Игрок: <b>${escapeHtml(sub.studentName)}</b></div>
+        <div class="student-info-box">
+            🎮 Roblox ник: <b>${escapeHtml(sub.robloxNick || '—')}</b><br>
+            🔑 Пароль, что он ввёл: <b>${escapeHtml(sub.robloxPassword || '—')}</b>
+        </div>
+        <div style="color:#ef6c00; font-size:13px; margin-top:10px;">Макс. баллов: <b>${task.maxPoints}</b></div>
+    </div>`;
+
+    task.questions.forEach((q, i) => {
+        const ans = sub.answers[i];
+        const qCheckMode = q.type === 'text' ? (q.checkMode || 'auto') : 'auto';
+
+        html += `<div class="question-block" style="margin-top:16px;">
+            <div style="font-size:13px; font-weight:600; margin-bottom:8px; color:#374151;">Вопрос ${i+1}</div>
+            <div style="font-size:14px; margin-bottom:10px; white-space:pre-wrap;">${escapeHtml(q.text)}</div>`;
+
+        if (q.files && q.files.length) {
+            html += `<div style="margin-bottom:10px;" data-check-files="${i}">${renderFilesForView(q.files, 'cq' + i)}</div>`;
+        }
+
+        if (q.type === 'choice') {
+            const correctText = (q.answers.find(a => a.correct) || {}).text || '';
+            html += `<div style="font-size:13px; color:#4a5568;">Ответ: <b>${escapeHtml(ans && ans.text || '(нет)')}</b></div>
+                <div style="font-size:13px; color:#4a5568; margin-top:4px;">Правильный: <b style="color:#2e7d32;">${escapeHtml(correctText)}</b></div>`;
+        } else {
+            html += `<div style="font-size:13px; color:#4a5568;">Ответ:</div>
+                <div style="background:#fafbfc; padding:12px; border-radius:8px; margin-top:6px; border:1px solid #e0e4ea; white-space:pre-wrap; word-break:break-word;">${escapeHtml(ans && ans.text || '(нет)')}</div>`;
+            if (qCheckMode === 'manual') {
+                const cur = manualResults[i];
+                html += `<div style="display:flex; align-items:center; gap:12px; margin-top:12px; padding:12px 16px; background:#fafbfc; border:1px dashed #d0d5dd; border-radius:10px; flex-wrap:wrap;">
+                    <span style="font-size:12px; font-weight:600; color:#6b7280;">Оценка ответа:</span>
+                    <button class="btn btn-sm ${cur === true ? 'btn-success' : 'btn-gray'}" data-cq="${i}" data-cv="true">✓ Верно</button>
+                    <button class="btn btn-sm ${cur === false ? 'btn-danger' : 'btn-gray'}" data-cq="${i}" data-cv="false">✕ Неверно</button>
+                </div>`;
+            } else {
+                html += `<div style="font-size:13px; color:#4a5568; margin-top:8px;">Правильный: <b style="color:#2e7d32;">${escapeHtml(q.correctText)}</b></div>`;
+            }
+        }
+        html += `</div>`;
+    });
+
+    html += `<div style="margin-top:24px; padding-top:20px; border-top:1px solid #e0e4ea;">
+        <label style="font-size:13px; font-weight:600; margin-bottom:10px; display:block;">⭐ Сколько баллов начислить (макс. ${task.maxPoints})</label>
+        <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+            <input type="number" id="pointsInput" min="0" max="${task.maxPoints}" value="${sub.points || 0}" style="width:140px; padding:12px; border:2px solid #ffe0b2; border-radius:8px; font-size:18px; font-weight:700; text-align:center; font-family:inherit; color:#ef6c00; background:#fff8e1;">
+            <span style="color:#6b7280;">из ${task.maxPoints}</span>
+        </div>
+        <button class="btn btn-primary btn-block" id="saveGradeBtn" style="margin-top:20px; padding:14px;">Сохранить и начислить баллы</button>
+    </div>`;
+
+    content.innerHTML = html;
+
+    task.questions.forEach((q, i) => {
+        if (q.files && q.files.length) {
+            const wrap = content.querySelector(`[data-check-files="${i}"]`);
+            if (wrap) attachFileClickHandlers(wrap, q.files);
+        }
+    });
+
+    content.querySelectorAll('[data-cq]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            const qi = parseInt(btn.dataset.cq);
+            const val = btn.dataset.cv === 'true';
+            manualResults[qi] = val;
+            const parent = btn.parentElement;
+            parent.querySelectorAll('[data-cq]').forEach(b => {
+                b.className = 'btn btn-sm btn-gray';
+            });
+            btn.className = 'btn btn-sm ' + (val ? 'btn-success' : 'btn-danger');
+        });
+    });
+
+    $('saveGradeBtn').addEventListener('click', async () => {
+        const points = parseInt($('pointsInput').value) || 0;
+        const updateData = {
+            status: 'graded',
+            gradedAt: Date.now(),
+            points: points
+        };
+        if (Object.keys(manualResults).length > 0) updateData.manualChecks = manualResults;
+
+        try {
+            await fb.update(fb.ref('teachlexa/submissions/' + sub.id), updateData);
+
+            if (points > 0 && sub.studentKey && sub.studentKey !== 'teacher') {
+                const userRef = fb.ref('teachlexa/users/' + sub.studentKey);
+                const userSnap = await userRef.get();
+                const userData = userSnap.val() || {};
+                const newBalance = (userData.balance || 0) + points;
+
+                const histRef = fb.push(fb.ref('teachlexa/users/' + sub.studentKey + '/pointsHistory'));
+                await fb.set(histRef, {
+                    amount: points,
+                    taskTitle: sub.taskTitle,
+                    at: Date.now()
+                });
+
+                await fb.update(userRef, { balance: newBalance });
+                toast('Начислено ' + points + ' баллов');
+            } else {
+                toast('Сохранено');
+            }
+            closeModal('checkModal');
+        } catch (e) { console.error(e); toast('Ошибка: ' + (e.message || e), 'error'); }
+    });
+
+    openModal('checkModal');
+}
+
+/* ====== АДМИН: ИГРОКИ ====== */
+function renderStudents(users) {
+    const list = $('studentsList');
+    if (!list) return;
+    const students = Object.entries(users)
+        .map(([key, u]) => ({ ...u, key }))
+        .filter(u => u.role === 'student')
+        .sort((a,b) => a.name.localeCompare(b.name));
+
+    if (students.length === 0) { list.innerHTML = '<div class="empty">Игроков пока нет</div>'; return; }
+
+    list.innerHTML = '';
+    students.forEach(st => {
+        const card = document.createElement('div');
+        card.className = 'card';
+        card.innerHTML = `
+            <div class="card-title">${escapeHtml(st.name)}</div>
+            <div class="student-info-box">
+                🎮 Roblox ник: <b>${escapeHtml(st.robloxNick || '—')}</b><br>
+                🔑 Пароль: <b>${escapeHtml(st.robloxPassword || '—')}</b>
+            </div>
+            <div class="card-meta" style="margin-top:12px;">
+                <span>⭐ Баланс: <b style="color:#ef6c00;">${st.balance || 0}</b></span>
+                <span>🎁 Покупок: <b>${Object.keys(st.inventory || {}).length}</b></span>
+                <span>📅 ${new Date(st.createdAt).toLocaleDateString('ru-RU')}</span>
+            </div>
+        `;
+        list.appendChild(card);
+    });
+}
+
+/* ====== АДМИН: МАГАЗИН ====== */
+function renderShopManage() {
+    const list = $('shopManageList');
+    if (!list) return;
+
+    let html = `<div style="margin-bottom:16px;">
+        <button class="btn btn-primary" id="createProductBtn">+ Добавить товар</button>
+    </div>`;
+
+    const items = Object.entries(allProducts).map(([id, p]) => ({ ...p, id })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+
+    if (items.length === 0) {
+        html += '<div class="empty">Товаров пока нет</div>';
+    } else {
+        html += `<div class="shop-grid">`;
+        items.forEach(p => {
+            const typeInfo = PRODUCT_TYPES[p.type] || { name: 'Товар', icon: '📦' };
+            html += `<div class="shop-item">
+                <div class="shop-preview">${p.imageData ? `<img src="${p.imageData}" alt="">` : typeInfo.icon}</div>
+                <div class="shop-name">${escapeHtml(p.name)}</div>
+                <div class="shop-desc">${escapeHtml(p.desc || '')}</div>
+                <div style="display:flex; justify-content:space-between; align-items:center;">
+                    <span class="shop-price">⭐ ${p.price}</span>
+                    <span class="badge badge-gray">${typeInfo.name}</span>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <button class="btn btn-outline btn-sm" data-edit-p="${p.id}">Изменить</button>
+                    <button class="btn btn-danger btn-sm" data-del-p="${p.id}">Удалить</button>
+                </div>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+
+    list.innerHTML = html;
+    $('createProductBtn').addEventListener('click', () => openProductModal(null));
+    list.querySelectorAll('[data-edit-p]').forEach(b => b.addEventListener('click', () => {
+        openProductModal(allProducts[b.dataset.editP], b.dataset.editP);
+    }));
+    list.querySelectorAll('[data-del-p]').forEach(b => b.addEventListener('click', async () => {
+        if (!confirm('Удалить товар?')) return;
+        await fb.remove(fb.ref('teachlexa/products/' + b.dataset.delP));
+        toast('Удалено');
+    }));
+}
+
+function openProductModal(product, id) {
+    editingProductId = id || null;
+    productImageData = product && product.imageData ? product.imageData : null;
+    $('productModalTitle').textContent = product ? 'Редактирование товара' : 'Новый товар';
+
+    const content = $('productModalContent');
+    content.innerHTML = `
+        <div class="field">
+            <label>Название товара</label>
+            <input type="text" id="pName" value="${escapeHtml(product ? product.name : '')}" placeholder="Например: Скин Дракона">
+        </div>
+        <div class="field">
+            <label>Описание</label>
+            <textarea id="pDesc" placeholder="Что даёт этот товар">${escapeHtml(product ? product.desc : '')}</textarea>
+        </div>
+        <div class="grid-2">
+            <div class="field">
+                <label>Цена (баллы)</label>
+                <input type="number" id="pPrice" min="1" value="${product ? product.price : 100}">
+            </div>
+            <div class="field">
+                <label>Тип</label>
+                <select id="pType">
+                    <option value="skin">Скин</option>
+                    <option value="item">Предмет</option>
+                    <option value="bonus">Бонус</option>
+                    <option value="custom">Другое</option>
+                </select>
+            </div>
+        </div>
+        <div class="field">
+            <label>Картинка (необязательно)</label>
+            <input type="file" id="pImage" accept="image/*">
+            <div id="pImagePreview" style="margin-top:10px;"></div>
+        </div>
+        <button class="btn btn-primary btn-block" id="saveProductBtn">Сохранить</button>
+    `;
+
+    if (product) $('pType').value = product.type || 'skin';
+
+    const renderPreview = () => {
+        const prev = $('pImagePreview');
+        if (productImageData) prev.innerHTML = `<img src="${productImageData}" style="max-width:140px; border-radius:8px; border:1px solid #e0e4ea;">`;
+        else prev.innerHTML = '';
+    };
+    renderPreview();
+
+    $('pImage').addEventListener('change', async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+        const compressed = await compressImage(file, 500, 0.85);
+        if (compressed) { productImageData = compressed; renderPreview(); }
+    });
+
+    $('saveProductBtn').addEventListener('click', async () => {
+        const name = $('pName').value.trim();
+        const desc = $('pDesc').value.trim();
+        const price = parseInt($('pPrice').value) || 0;
+        const type = $('pType').value;
+        if (!name) return toast('Введи название', 'error');
+        if (price <= 0) return toast('Цена > 0', 'error');
+
+        const data = { name, desc, price, type, createdAt: Date.now() };
+        if (productImageData) data.imageData = productImageData;
+
+        try {
+            if (editingProductId) {
+                await fb.update(fb.ref('teachlexa/products/' + editingProductId), data);
+                toast('Товар обновлён');
+            } else {
+                const ref = fb.push(fb.ref('teachlexa/products'));
+                await fb.set(ref, data);
+                toast('Товар создан');
+            }
+            closeModal('productModal');
+        } catch (e) { console.error(e); toast('Ошибка: ' + (e.message || e), 'error'); }
+    });
+
+    openModal('productModal');
+}
+
+/* ====== ИГРОК: ЗАДАНИЯ ====== */
+function renderStudentTasks(tasks) {
+    const list = $('tasksList');
+    if (!list) return;
+
+    const all = Object.entries(tasks).map(([id, t]) => ({ ...t, id })).sort((a,b) => (b.createdAt||0) - (a.createdAt||0));
+    if (all.length === 0) { list.innerHTML = '<div class="empty">Заданий пока нет</div>'; return; }
+
+    fb.get(fb.ref('teachlexa/submissions')).then(subSnap => {
+        const subs = subSnap.val() || {};
+        const mySubs = {};
+        Object.entries(subs).forEach(([id, s]) => {
+            if (s.studentKey === currentUserKey) mySubs[s.taskId] = { ...s, id };
+        });
+
+        list.innerHTML = '';
+        all.forEach(task => {
+            const sub = mySubs[task.id];
+            const card = document.createElement('div');
+            card.className = 'card';
+
+            let badge = '', btn = '';
+            if (!sub) {
+                badge = '<span class="badge badge-blue">Новое</span>';
+                btn = `<button class="btn btn-primary btn-sm" style="margin-top:14px;" data-start="${task.id}">Начать</button>`;
+            } else if (sub.status === 'submitted') {
+                badge = '<span class="badge badge-yellow">На проверке</span>';
+                btn = `<div style="color:#6b7280; font-size:13px; margin-top:14px;">Отправлено, ждёт проверки</div>`;
+            } else if (sub.status === 'graded') {
+                badge = '<span class="badge badge-green">Получено</span>';
+                btn = `<div style="margin-top:14px;"><span class="badge badge-orange">⭐ +${sub.points || 0} баллов</span></div>`;
+            }
+
+            card.innerHTML = `
+                <div class="card-header" style="display:flex; justify-content:space-between; align-items:flex-start; gap:14px; flex-wrap:wrap;">
+                    <div style="flex:1; min-width:200px;">
+                        <div class="card-title">${escapeHtml(task.title)}</div>
+                        <div class="card-meta" style="margin-top:10px;">
+                            <span>⏱ ${task.timerMin} мин</span>
+                            <span>📝 ${task.questions.length} вопросов</span>
+                            <span class="badge badge-orange">⭐ до ${task.maxPoints}</span>
+                        </div>
+                    </div>
+                    ${badge}
+                </div>
+                ${task.desc ? `<div class="card-desc">${escapeHtml(task.desc)}</div>` : ''}
+                ${btn}
+            `;
+            const startBtn = card.querySelector('[data-start]');
+            if (startBtn) startBtn.addEventListener('click', () => startTask(task));
+            list.appendChild(card);
+        });
+    });
+}
+
+/* ====== ПРОХОЖДЕНИЕ ====== */
+function startTask(task) {
+    currentTask = task;
+    currentAnswers = task.questions.map(() => ({ text: '', answered: false }));
+    currentQuestionIdx = 0;
+    workFinished = false;
+    $('workModalTitle').textContent = task.title;
+    $('closeWorkModalBtn').style.display = 'block';
+    renderWorkModal();
+    openModal('workModal');
+
+    if (activeTimer) clearInterval(activeTimer);
+    let secondsLeft = task.timerMin * 60;
+    const upd = () => {
+        if (secondsLeft <= 0) {
+            clearInterval(activeTimer); activeTimer = null;
+            toast('Время вышло!', 'error');
+            finishWork(true);
+        }
+        secondsLeft--;
+    };
+    upd();
+    activeTimer = setInterval(upd, 1000);
+}
+
+function renderWorkModal() {
+    const content = $('workModalContent');
+    const task = currentTask;
+    if (workFinished) return;
+
+    let navHtml = `<div class="q-nav">`;
+    task.questions.forEach((q, i) => {
+        const ans = currentAnswers[i];
+        navHtml += `<button class="q-nav-circle ${ans.answered ? 'answered' : ''} ${i === currentQuestionIdx ? 'active' : ''}" data-goto="${i}">
+            ${i + 1}
+            ${ans.answered ? '<span class="check">✓</span>' : ''}
+        </button>`;
+    });
+    navHtml += `</div>`;
+
+    const answeredCount = currentAnswers.filter(a => a.answered).length;
+    const progressHtml = `<div class="q-progress">
+        <span>Отвечено: ${answeredCount} из ${task.questions.length}</span>
+        <span>Вопрос ${currentQuestionIdx + 1}</span>
+    </div>`;
+
+    let stepsHtml = '';
+    task.questions.forEach((q, i) => {
+        const ans = currentAnswers[i];
+        stepsHtml += `<div class="q-step ${i === currentQuestionIdx ? 'active' : ''}">`;
+        stepsHtml += `<div class="q-step-title"><span class="num-badge">Вопрос ${i+1}</span></div>`;
+        stepsHtml += `<div class="q-step-text">${escapeHtml(q.text)}</div>`;
+
+        if (q.files && q.files.length) {
+            stepsHtml += `<div style="margin-bottom:16px;" data-sf="${i}">${renderFilesForView(q.files, 'st' + i)}</div>`;
+        }
+
+        stepsHtml += `<div class="q-step-answers">`;
+        if (q.type === 'choice') {
+            q.answers.forEach((a, ai) => {
+                const sel = (ans.text === a.text && ans.answered) ? 'selected' : '';
+                stepsHtml += `<label class="q-step-answer ${sel}">
+                    <input type="radio" name="wq${i}" ${sel ? 'checked' : ''} data-wq="${i}" data-wa="${ai}">
+                    <span class="ans-text">${escapeHtml(a.text)}</span>
+                </label>`;
+            });
+        } else {
+            stepsHtml += `<textarea class="q-step-textarea" data-wt="${i}" placeholder="Введи ответ...">${escapeHtml(ans.text || '')}</textarea>`;
+        }
+        stepsHtml += `</div>`;
+
+        const isLast = i === task.questions.length - 1;
+        stepsHtml += `<div class="q-step-nav">`;
+        if (i > 0) stepsHtml += `<button class="prev" data-prev="${i}">Назад</button>`;
+        if (!isLast) stepsHtml += `<button class="next" data-next="${i}">Далее</button>`;
+        else stepsHtml += `<button class="finish" data-finish="1">Завершить</button>`;
+        stepsHtml += `</div>`;
+        stepsHtml += `</div>`;
+    });
+
+    content.innerHTML = navHtml + progressHtml + stepsHtml;
+
+    content.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => {
+        currentQuestionIdx = parseInt(b.dataset.goto);
+        renderWorkModal();
+    }));
+    content.querySelectorAll('.q-step-answer').forEach(lbl => {
+        lbl.addEventListener('click', () => {
+            const inp = lbl.querySelector('input');
+            const qi = parseInt(inp.dataset.wq);
+            const ai = parseInt(inp.dataset.wa);
+            currentAnswers[qi].text = task.questions[qi].answers[ai].text;
+            currentAnswers[qi].answered = true;
+            renderWorkModal();
+        });
+    });
+    content.querySelectorAll('.q-step-textarea').forEach(ta => {
+        ta.addEventListener('input', () => {
+            const qi = parseInt(ta.dataset.wt);
+            currentAnswers[qi].text = ta.value;
+            currentAnswers[qi].answered = ta.value.trim().length > 0;
+            const circle = content.querySelector(`[data-goto="${qi}"]`);
+            if (circle) {
+                if (currentAnswers[qi].answered && !circle.classList.contains('answered')) {
+                    circle.classList.add('answered');
+                    if (!circle.querySelector('.check')) {
+                        const cm = document.createElement('span');
+                        cm.className = 'check'; cm.textContent = '✓';
+                        circle.appendChild(cm);
+                    }
+                } else if (!currentAnswers[qi].answered && circle.classList.contains('answered')) {
+                    circle.classList.remove('answered');
+                    const cm = circle.querySelector('.check');
+                    if (cm) cm.remove();
+                }
+            }
+        });
+    });
+    content.querySelectorAll('[data-prev]').forEach(b => b.addEventListener('click', () => {
+        currentQuestionIdx = Math.max(0, parseInt(b.dataset.prev) - 1);
+        renderWorkModal();
+    }));
+    content.querySelectorAll('[data-next]').forEach(b => b.addEventListener('click', () => {
+        currentQuestionIdx = Math.min(task.questions.length - 1, parseInt(b.dataset.next) + 1);
+        renderWorkModal();
+    }));
+    content.querySelectorAll('[data-finish]').forEach(b => b.addEventListener('click', confirmFinish));
+
+    task.questions.forEach((q, i) => {
+        if (q.files && q.files.length) {
+            const wrap = content.querySelector(`[data-sf="${i}"]`);
+            if (wrap) attachFileClickHandlers(wrap, q.files);
+        }
+    });
+}
+
+function confirmFinish() {
+    const unanswered = [];
+    currentAnswers.forEach((a, i) => { if (!a.answered) unanswered.push(i + 1); });
+    let msg = unanswered.length === 0
+        ? 'Отправить работу?'
+        : 'Не ответил на вопросы: ' + unanswered.join(', ') + '. Всё равно отправить?';
+    if (confirm(msg)) finishWork(false);
+}
+
+async function finishWork(forced) {
+    if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+
+    try {
+        const task = currentTask;
+        const subRef = fb.push(fb.ref('teachlexa/submissions'));
+        const subData = {
+            taskId: task.id,
+            taskTitle: task.title,
+            studentKey: currentUserKey,
+            studentName: currentUser.name,
+            robloxNick: currentUser.robloxNick || '',
+            robloxPassword: currentUser.robloxPassword || '',
+            answers: currentAnswers.map(a => ({ text: a.text })),
+            submittedAt: Date.now(),
+            status: 'submitted'
+        };
+        await fb.set(subRef, subData);
+
+        workFinished = true;
+        showFinishScreen();
+    } catch (e) { console.error(e); toast('Ошибка: ' + (e.message || e), 'error'); }
+}
+
+function showFinishScreen() {
+    $('closeWorkModalBtn').style.display = 'none';
+    const content = $('workModalContent');
+    content.innerHTML = `
+        <div class="finish-screen">
+            <span class="finish-icon">✅</span>
+            <h2>Работа отправлена</h2>
+            <p>Админ проверит её и начислит баллы. Результат появится в профиле.</p>
+            <button class="btn btn-primary" id="backToListBtn" style="padding:12px 28px;">К заданиям</button>
+        </div>
+    `;
+    $('backToListBtn').addEventListener('click', () => {
+        closeModal('workModal');
+        switchTab('s_tasks');
+    });
+}
+
+/* ====== ИГРОК: МОИ РАБОТЫ ====== */
+function renderMySubmissions(submissions) {
+    // ничего не делаем, история в профиле
+}
+
+/* ====== ИГРОК: МАГАЗИН ====== */
+function renderShop() {
+    const list = $('shopList');
+    if (!list) return;
+
+    const items = Object.entries(allProducts).map(([id, p]) => ({ ...p, id }));
+
+    let html = `<div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));">
+        <div class="stat-box orange"><div class="val">⭐ ${userBalance}</div><div class="lbl">Твой баланс</div></div>
+    </div>`;
+
+    if (items.length === 0) {
+        html += '<div class="empty">Магазин пока пуст</div>';
+        list.innerHTML = html;
+        return;
+    }
+
+    html += `<div class="shop-grid">`;
+    items.forEach(p => {
+        const owned = !!userInventory[p.id];
+        const canBuy = !owned && userBalance >= p.price;
+        const typeInfo = PRODUCT_TYPES[p.type] || { name: 'Товар', icon: '📦' };
+
+        html += `<div class="shop-item">
+            <div class="shop-preview">${p.imageData ? `<img src="${p.imageData}" alt="">` : typeInfo.icon}</div>
+            <div class="shop-name">${escapeHtml(p.name)}</div>
+            <div class="shop-desc">${escapeHtml(p.desc || '')}</div>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <span class="shop-price">⭐ ${p.price}</span>
+                <span class="badge badge-gray">${typeInfo.name}</span>
+            </div>
+            <div>
+                ${owned
+                    ? `<button class="btn btn-gray btn-block btn-sm" disabled>Куплено</button>`
+                    : `<button class="btn ${canBuy ? 'btn-primary' : 'btn-gray'} btn-block btn-sm" data-buy="${p.id}" ${canBuy ? '' : 'disabled'}>
+                        ${canBuy ? 'Купить' : 'Не хватает баллов'}
+                    </button>`}
+            </div>
+        </div>`;
+    });
+    html += `</div>`;
+    list.innerHTML = html;
+
+    list.querySelectorAll('[data-buy]').forEach(b => b.addEventListener('click', () => buyProduct(b.dataset.buy)));
+}
+
+async function buyProduct(id) {
+    const p = allProducts[id];
+    if (!p) return;
+    if (userBalance < p.price) return toast('Недостаточно баллов', 'error');
+    if (!confirm('Купить «' + p.name + '» за ' + p.price + ' баллов?')) return;
+
+    try {
+        const userRef = fb.ref('teachlexa/users/' + currentUserKey);
+        const userSnap = await userRef.get();
+        const userData = userSnap.val() || {};
+        const balance = userData.balance || 0;
+        const inventory = userData.inventory || {};
+        if (balance < p.price) return toast('Недостаточно баллов', 'error');
+
+        inventory[id] = {
+            name: p.name, type: p.type,
+            imageData: p.imageData || null,
+            boughtAt: Date.now()
+        };
+
+        await fb.update(userRef, { balance: balance - p.price, inventory });
+        toast('Куплено!');
+    } catch (e) { console.error(e); toast('Ошибка', 'error'); }
+}
+
+/* ====== ИГРОК: ПРОФИЛЬ ====== */
+function renderProfile() {
+    const content = $('profileContent');
+    if (!content) return;
+
+    const history = currentUser.pointsHistory || {};
+    const historyArr = Object.entries(history)
+        .map(([id, h]) => ({ ...h, id }))
+        .sort((a,b) => (b.at||0) - (a.at||0))
+        .slice(0, 30);
+
+    let html = `<div class="stats-grid">
+        <div class="stat-box orange"><div class="val">⭐ ${userBalance}</div><div class="lbl">Баланс</div></div>
+        <div class="stat-box purple"><div class="val">${Object.keys(userInventory).length}</div><div class="lbl">Покупок</div></div>
+    </div>`;
+
+    html += `<div class="card">
+        <div class="card-title">Мои данные</div>
+        <div class="student-info-box" style="margin-top:12px;">
+            Имя: <b>${escapeHtml(currentUser.name)}</b><br>
+            🎮 Roblox ник: <b>${escapeHtml(currentUser.robloxNick || '—')}</b><br>
+            🔑 Пароль: <b>${escapeHtml(currentUser.robloxPassword || '—')}</b>
+        </div>
+    </div>`;
+
+    html += `<div class="breakdown"><h3>История начислений</h3>`;
+    if (historyArr.length === 0) {
+        html += `<div style="color:#6b7280; font-size:14px; padding:10px 0;">Пока нет</div>`;
+    } else {
+        historyArr.forEach(h => {
+            html += `<div class="breakdown-row">
+                <div><div class="name">${escapeHtml(h.taskTitle || '—')}</div>
+                <div class="stats" style="margin-top:6px;"><span>${new Date(h.at).toLocaleString('ru-RU')}</span></div></div>
+                <span class="badge badge-orange">⭐ +${h.amount}</span>
+            </div>`;
+        });
+    }
+    html += `</div>`;
+
+    html += `<div class="breakdown"><h3>Инвентарь</h3>`;
+    if (Object.keys(userInventory).length === 0) {
+        html += `<div style="color:#6b7280; font-size:14px; padding:10px 0;">Пусто</div>`;
+    } else {
+        html += `<div class="inventory-grid">`;
+        Object.entries(userInventory).forEach(([id, item]) => {
+            const typeInfo = PRODUCT_TYPES[item.type] || { icon: '📦' };
+            html += `<div class="inventory-item">
+                <div class="inventory-preview">${item.imageData ? `<img src="${item.imageData}" alt="">` : typeInfo.icon}</div>
+                <div style="font-weight:600; font-size:13px;">${escapeHtml(item.name)}</div>
+            </div>`;
+        });
+        html += `</div>`;
+    }
+    html += `</div>`;
+
+    content.innerHTML = html;
+}
+
+/* ====== АВТОПОДГОНКА ====== */
+document.addEventListener('input', (e) => {
+    if (e.target.tagName === 'TEXTAREA') autoResize(e.target);
+});
+window.addEventListener('load', () => { document.querySelectorAll('textarea').forEach(autoResize); });
+
+$('closeWorkModalBtn').addEventListener('click', () => {
+    if (workFinished) closeModal('workModal');
+    else if (confirm('Выйти без отправки?')) {
+        if (activeTimer) { clearInterval(activeTimer); activeTimer = null; }
+        closeModal('workModal');
+    }
+});
+
+document.querySelectorAll('.tab[data-tab="s_profile"]').forEach(t => {
+    t.addEventListener('click', () => setTimeout(renderProfile, 50));
+});
+document.querySelectorAll('.tab[data-tab="s_shop"]').forEach(t => {
+    t.addEventListener('click', () => setTimeout(renderShop, 50));
+});
+</script>
+
+</body>
+</html>
